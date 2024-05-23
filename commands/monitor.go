@@ -15,6 +15,7 @@ type MonitorCommand struct {
 }
 
 func (m *MonitorCommand) Execute() error {
+
 	go m.MonitorLatest()
 	time.Sleep(3 * time.Second)
 	m.MonitorBlock()
@@ -25,8 +26,9 @@ func (m *MonitorCommand) Execute() error {
 // Monitor the block by number.
 //
 // Fetch the block every 3 seconds
-func (m *MonitorCommand) MonitorBlock() string {
+func (m *MonitorCommand) MonitorBlock() {
 	for {
+		log.Println("monitoring block number: ", m.BlockNumber)
 		go func() {
 			if block := m.FetchBlock(m.BlockNumber); block != nil {
 				log.Println("new block: ", m.BlockNumber)
@@ -58,17 +60,19 @@ func (m *MonitorCommand) FetchBlock(number int64) *api.BlockExtention {
 func (m *MonitorCommand) FetchLatestBlock() {
 	log.Println("fetching latest block...")
 	block, err := m.Client.GetNowBlock()
-
-	if m.BlockNumber == 0 {
-		m.BlockNumber = block.BlockHeader.RawData.Number
-	}
-
-	log.Fatalln("now block number is: ", m.BlockNumber)
-
-	// TODO: if currently fetch is too late to get the latest block, need to fix this issue later
 	if err != nil {
 		log.Fatalf("failed to fetch latest block: %v", err)
 	}
+
+	if m.BlockNumber == 0 {
+		m.BlockNumber = block.BlockHeader.RawData.Number
+		log.Println("set current block number to: ", block.BlockHeader.RawData.Number)
+	}
+
+	log.Println("now block number is: ", m.BlockNumber)
+
+	// TODO: if currently fetch is too late to get the latest block, need to fix this issue later
+
 }
 
 // Monitor the latest block.
