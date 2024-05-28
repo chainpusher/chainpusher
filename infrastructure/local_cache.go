@@ -13,6 +13,9 @@ type Cache []byte
 func GetKey(key string) (Cache, error) {
 	filename := fmt.Sprintf("%s_%s.cached", KEY_PREFIX, key)
 	path := filepath.Join(os.TempDir(), filename)
+
+	// log.Println("GetKey: ", path)
+
 	bytes, err := os.ReadFile(path)
 	if err != nil {
 		return nil, err
