@@ -9,8 +9,53 @@ import (
 	"github.com/fbsobreira/gotron-sdk/pkg/abi"
 	"github.com/fbsobreira/gotron-sdk/pkg/address"
 	"github.com/fbsobreira/gotron-sdk/pkg/client"
+	tc "github.com/fbsobreira/gotron-sdk/pkg/common"
+	"github.com/fbsobreira/gotron-sdk/pkg/proto/core"
 	"google.golang.org/grpc"
 )
+
+// test the log of tron contract
+func TestTronUSDTContractLog(t *testing.T) {
+	if "payee" != "a" {
+		t.Error("payee is incorrect")
+	}
+
+	if "payer" != "b" {
+		t.Error("payer is incorrect")
+	}
+
+}
+
+func TestTronTransactionTransferContract(t *testing.T) {
+	client := client.NewGrpcClient("")
+	client.Start(grpc.WithInsecure())
+
+	transaction, err := client.GetTransactionByID("68fc9d0cd12807e0d0ef25dba843c1e0a06f34b72e102b8ed3be051bda3c989a")
+	if err != nil {
+		t.Error(err)
+	}
+
+	contract := transaction.RawData.GetContract()[0]
+
+	var transferContract core.TransferContract
+	contract.Parameter.UnmarshalTo(&transferContract)
+
+	payer := "TBREsCfBdPyD612xZnwvGPux7osbXvtzLh"
+	payee := "TYqDptDgPUBwhrETDqJjjrCocKgwrQ5tyw"
+	var amount int64 = 20000000
+
+	if transferContract.Amount != amount {
+		t.Error("Amount is incorrect")
+	}
+
+	if payer != tc.EncodeCheck(transferContract.OwnerAddress) {
+		t.Error("Payer is incorrect")
+	}
+
+	if payee != tc.EncodeCheck(transferContract.ToAddress) {
+		t.Error("Payee is incorrect")
+	}
+}
 
 // test the transaction of tron
 func TestTronTransaction(t *testing.T) {
@@ -40,7 +85,7 @@ func TestTronTransaction(t *testing.T) {
 	t.Log(err, addrHex)
 }
 
-// TODO: application logic
+// PLAN: application logic
 func TestTronParseArgumentsOfSmartContract(t *testing.T) {
 	client := client.NewGrpcClient("")
 	client.Start(grpc.WithInsecure())
