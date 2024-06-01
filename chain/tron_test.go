@@ -14,18 +14,6 @@ import (
 	"google.golang.org/grpc"
 )
 
-// test the log of tron contract
-func TestTronUSDTContractLog(t *testing.T) {
-	if "payee" != "a" {
-		t.Error("payee is incorrect")
-	}
-
-	if "payer" != "b" {
-		t.Error("payer is incorrect")
-	}
-
-}
-
 func TestTronTransactionTransferContract(t *testing.T) {
 	client := client.NewGrpcClient("")
 	client.Start(grpc.WithInsecure())
@@ -42,6 +30,8 @@ func TestTronTransactionTransferContract(t *testing.T) {
 
 	payer := "TBREsCfBdPyD612xZnwvGPux7osbXvtzLh"
 	payee := "TYqDptDgPUBwhrETDqJjjrCocKgwrQ5tyw"
+	contractType := "type.googleapis.com/protocol.TransferContract"
+
 	var amount int64 = 20000000
 
 	if transferContract.Amount != amount {
@@ -54,6 +44,10 @@ func TestTronTransactionTransferContract(t *testing.T) {
 
 	if payee != tc.EncodeCheck(transferContract.ToAddress) {
 		t.Error("Payee is incorrect")
+	}
+
+	if contractType != contract.GetParameter().TypeUrl {
+		t.Error("Contract type is incorrect")
 	}
 }
 
