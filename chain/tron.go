@@ -1,8 +1,10 @@
 package chain
 
 import (
+	"errors"
 	"fmt"
 	"log"
+	"time"
 
 	"github.com/chainpusher/chainpusher/infrastructure"
 	"github.com/chainpusher/chainpusher/model"
@@ -13,6 +15,7 @@ import (
 	"github.com/fbsobreira/gotron-sdk/pkg/client"
 	"github.com/fbsobreira/gotron-sdk/pkg/proto/api"
 	"github.com/fbsobreira/gotron-sdk/pkg/proto/core"
+	"github.com/sirupsen/logrus"
 	"google.golang.org/protobuf/proto"
 )
 
@@ -36,13 +39,23 @@ func (service *TronBlockChainService) GetNowBlock() (*api.BlockExtention, []*mod
 }
 
 func (service *TronBlockChainService) GetBlock(number int64) ([]*model.Transaction, error) {
-	block, err := service.Client.GetBlockByNum(number)
 
-	if err != nil {
-		return nil, err
+	for i := 0; i < 10; i++ {
+		block, err := service.Client.GetBlockByNum(number)
+
+		if err != nil {
+			logrus.Warnf("Error getting block: %v", err)
+		} else if block.BlockHeader != nil {
+			return ToTransactions(service.UsdtTransferArguments, block), nil
+		} else {
+			logrus.Warnf("Block not found: %v", number)
+		}
+
+		logrus.Warnf("Retrying block: %v", number)
+		time.Sleep(1 * time.Second)
 	}
 
-	return ToTransactions(service.UsdtTransferArguments, block), nil
+	return nil, errors.New("error getting block on 10 attempts")
 }
 
 func GetUsdtSmartContract(client *client.GrpcClient) (*core.SmartContract_ABI, error) {
