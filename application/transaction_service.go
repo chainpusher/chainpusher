@@ -1,10 +1,9 @@
 package application
 
 import (
-	"log"
-
 	"github.com/chainpusher/chainpusher/model"
 	"github.com/chainpusher/chainpusher/postoffice"
+	"github.com/sirupsen/logrus"
 )
 
 type TransactionService struct {
@@ -20,7 +19,7 @@ func NewTransactionService(repository model.WatchlistRepository) *TransactionSer
 }
 
 func (t *TransactionService) AnalyzeTrade(transaction *model.Transaction) error {
-	log.Printf("Transfer: %v", transaction.Logging())
+	logrus.Tracef("Transfer: %v", transaction.Logging())
 
 	if isOn := t.WatchlistRepository.IsOnList(transaction.Payee); !isOn {
 		return nil

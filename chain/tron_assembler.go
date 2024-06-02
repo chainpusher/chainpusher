@@ -10,6 +10,7 @@ import (
 	"github.com/fbsobreira/gotron-sdk/pkg/address"
 	"github.com/fbsobreira/gotron-sdk/pkg/proto/api"
 	"github.com/fbsobreira/gotron-sdk/pkg/proto/core"
+	"github.com/sirupsen/logrus"
 )
 
 func FromTronTransferContract(tc *core.Transaction_Contract) *model.Transaction {
@@ -79,7 +80,7 @@ func FromTronContractToTransaction(args *abi.Arguments, tc *core.Transaction_Con
 }
 
 func ToTransactions(args *abi.Arguments, block *api.BlockExtention) []*model.Transaction {
-
+	logrus.Debugf("Block transactions: %d", len(block.Transactions))
 	var transactions []*model.Transaction
 	for _, transaction := range block.Transactions {
 		contracts := transaction.GetTransaction().GetRawData().GetContract()

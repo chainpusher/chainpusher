@@ -8,6 +8,7 @@ import (
 	"github.com/chainpusher/chainpusher/chain"
 	"github.com/chainpusher/chainpusher/config"
 	"github.com/fbsobreira/gotron-sdk/pkg/client"
+	"github.com/sirupsen/logrus"
 	"google.golang.org/grpc"
 )
 
@@ -40,14 +41,14 @@ func (p *PlatformWatcherTron) Start() {
 }
 
 func (p *PlatformWatcherTron) FetchBlocks() {
+	logrus.Debug("Fetching block ", p.Number)
 	transactions, err := p.Service.GetBlock(p.Number)
 	if err != nil {
-		log.Printf("Error getting block: %v", err)
+		logrus.Warnf("Error getting block: %v", err)
 		return
 	}
-
+	logrus.Infof("Block %d fetched with %d transactions", p.Number, len(transactions))
 	p.ApplicationService.AnalyzeTrades(transactions)
-	p.Number++
 }
 
 func (p *PlatformWatcherTron) WatchBlocks() {
@@ -57,6 +58,7 @@ func (p *PlatformWatcherTron) WatchBlocks() {
 			return
 		default:
 			go p.FetchBlocks()
+			p.Number++
 			time.Sleep(3 * time.Second)
 		}
 

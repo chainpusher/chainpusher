@@ -8,6 +8,9 @@ import (
 )
 
 type Config struct {
+	Logger struct {
+		Level string `json:"level"`
+	}
 	Wallets []string `json:"wallets"`
 }
 
@@ -27,6 +30,10 @@ func ParseConfigFromYaml(file string) (*Config, error) {
 	err = yaml.Unmarshal(bytes, &config)
 	if err != nil {
 		return nil, err
+	}
+
+	if config.Logger.Level == "" {
+		config.Logger.Level = "INFO"
 	}
 
 	return &config, nil
