@@ -40,14 +40,14 @@ func (p *PlatformWatcherTron) Start() {
 	log.Println("Starting Tron platform watcher ...")
 }
 
-func (p *PlatformWatcherTron) FetchBlocks() {
-	logrus.Debug("Fetching block ", p.Number)
-	transactions, err := p.Service.GetBlock(p.Number)
+func (p *PlatformWatcherTron) FetchBlocks(number int64) {
+	logrus.Debug("Fetching block ", number)
+	transactions, err := p.Service.GetBlock(number)
 	if err != nil {
 		logrus.Warnf("Error getting block: %v", err)
 		return
 	}
-	logrus.Infof("Block %d fetched with %d transactions", p.Number, len(transactions))
+	logrus.Infof("Block %d fetched with %d transactions", number, len(transactions))
 	p.ApplicationService.AnalyzeTrades(transactions)
 }
 
@@ -57,7 +57,7 @@ func (p *PlatformWatcherTron) WatchBlocks() {
 		case <-p.done:
 			return
 		default:
-			go p.FetchBlocks()
+			go p.FetchBlocks(p.Number)
 			p.Number++
 			time.Sleep(3 * time.Second)
 		}
