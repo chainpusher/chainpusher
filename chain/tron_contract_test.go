@@ -1,6 +1,13 @@
 package chain
 
-import "testing"
+import (
+	"testing"
+)
+
+// Test the abi serialize and deserialize of tron contract
+func TestTronConstractAbiSerialize(t *testing.T) {
+
+}
 
 func TestTronNewContract(t *testing.T) {
 	contract, err := NewTronContract("TR7NHqjeKQxGTCi8q8ZY4pL8otSzgjLj6t")

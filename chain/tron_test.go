@@ -53,10 +53,11 @@ func TestTronTransactionTransferContract(t *testing.T) {
 
 // test the transaction of tron
 func TestTronTransaction(t *testing.T) {
+
 	client := client.NewGrpcClient("")
 	client.Start(grpc.WithInsecure())
 
-	transaction, err := client.GetTransactionInfoByID("73d387d1ef336ed0ad79fdd886107b0f2942e5823db5169faf211f40958daa4d")
+	transaction, err := client.GetTransactionInfoByID("5bf1a31180c96226952925e31b85390af6ca5ad06291fec9ba8d5c4017df510c")
 	if err != nil {
 		t.Error(err)
 	}
@@ -81,12 +82,17 @@ func TestTronTransaction(t *testing.T) {
 
 // PLAN: application logic
 func TestTronParseArgumentsOfSmartContract(t *testing.T) {
+	// payee := "TNEJn1gqWKbNo26TsimuazmxxpjqufdS83"
+	payer := "TVfDGG67P8778zZKmgaMnU1sYegfwsQaWg"
+
 	client := client.NewGrpcClient("")
 	client.Start(grpc.WithInsecure())
 
-	input, _ := hex.DecodeString("a9059cbb00000000000000000000000011e4178f495918a287807adc40d18f53239bf91f0000000000000000000000000000000000000000000000000000000005f5e100")
-
-	contractAbi, err := client.GetContractABI("TR7NHqjeKQxGTCi8q8ZY4pL8otSzgjLj6t")
+	input, _ := hex.DecodeString("a9059cbb000000000000000000000041d7fb3f45980187dbbe41c30fbba76f008e16e89f0000000000000000000000000000000000000000000000000000000000000186")
+	if len(input) != 68 {
+		t.Error("Input length is incorrect")
+	}
+	contractAbi, err := GetUsdtSmartContract(client)
 
 	if err != nil {
 		return
@@ -101,15 +107,17 @@ func TestTronParseArgumentsOfSmartContract(t *testing.T) {
 	ethAddress := unpacked[0].(common.Address)
 	amount := unpacked[1].(*big.Int)
 
-	tronAddress := ToTronAddress(ethAddress)
+	tronAddress := ToTronAddress(ethAddress).String()
 
 	if err != nil {
 		t.Error(err)
 	}
 
-	if tronAddress.String() != "TBbojS2CE76ury6v9zxamuzVCaDftVouN5" {
+	if tronAddress != payer {
 		t.Error("Address is incorrect")
 	}
 
-	t.Log(tronAddress.String(), amount)
+	if amount.Int64() != 390 {
+		t.Error("Amount is incorrect")
+	}
 }

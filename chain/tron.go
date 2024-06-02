@@ -1,11 +1,102 @@
 package chain
 
 import (
+	"fmt"
+	"log"
+
+	"github.com/chainpusher/chainpusher/infrastructure"
+	"github.com/chainpusher/chainpusher/model"
+	"github.com/ethereum/go-ethereum/accounts/abi"
 	"github.com/ethereum/go-ethereum/common"
+	tcAbi "github.com/fbsobreira/gotron-sdk/pkg/abi"
 	"github.com/fbsobreira/gotron-sdk/pkg/address"
+	"github.com/fbsobreira/gotron-sdk/pkg/client"
+	"github.com/fbsobreira/gotron-sdk/pkg/proto/api"
 	"github.com/fbsobreira/gotron-sdk/pkg/proto/core"
 	"google.golang.org/protobuf/proto"
 )
+
+var TronUsdtAddress string = "TR7NHqjeKQxGTCi8q8ZY4pL8otSzgjLj6t"
+var TronTriggerSmartyContract string = "type.googleapis.com/protocol.TriggerSmartContract"
+
+type TronBlockChainService struct {
+	Client                *client.GrpcClient
+	Listner               TransactionListener
+	SmartContractAbi      *core.SmartContract_ABI
+	UsdtTransferArguments *abi.Arguments
+}
+
+func (service *TronBlockChainService) GetNowBlock() (*api.BlockExtention, []*model.Transaction, error) {
+	block, err := service.Client.GetNowBlock()
+	if err != nil {
+		return nil, nil, err
+	}
+
+	return block, ToTransactions(service.UsdtTransferArguments, block), nil
+}
+
+func (service *TronBlockChainService) GetBlock(number int64) ([]*model.Transaction, error) {
+	block, err := service.Client.GetBlockByNum(number)
+
+	if err != nil {
+		return nil, err
+	}
+
+	return ToTransactions(service.UsdtTransferArguments, block), nil
+}
+
+func GetUsdtSmartContract(client *client.GrpcClient) (*core.SmartContract_ABI, error) {
+	var contractAbi *core.SmartContract_ABI
+	cacheKey := fmt.Sprintf("proto_%s", TronUsdtAddress)
+	contractAbiBytes, err := infrastructure.GetKey(cacheKey)
+
+	if err != nil {
+		log.Printf("Error getting contract ABI from cache: %v", err)
+	} else {
+		log.Printf("Contract ABI fetched from cache")
+	}
+
+	// TODO: Implement the following code
+	// if err == nil {
+	// 	err := proto.Unmarshal(contractAbiBytes, contractAbi)
+	// 	if err != nil {
+	// 		log.Fatalf("Error unmarshaling contract ABI: %v", err)
+	// 	}
+	// }
+
+	contractAbi, err = client.GetContractABI(TronUsdtAddress)
+	if err != nil {
+		log.Fatalf("Error getting contract ABI: %v", err)
+		return nil, err
+	}
+
+	contractAbiBytes, err = proto.Marshal(contractAbi)
+	if err != nil {
+		log.Fatalf("Error marshaling contract ABI: %v", err)
+	}
+	infrastructure.SetKey(cacheKey, contractAbiBytes)
+	return contractAbi, err
+}
+
+func NewTronBlockChainService(
+	listener TransactionListener,
+	smartContractAbi *core.SmartContract_ABI,
+	client *client.GrpcClient) *TronBlockChainService {
+
+	args, err := tcAbi.GetInputsParser(smartContractAbi, "transfer")
+
+	if err != nil {
+		log.Fatalf("Error getting inputs parser: %v", err)
+		panic(err)
+	}
+
+	return &TronBlockChainService{
+		Client:                client,
+		Listner:               listener,
+		SmartContractAbi:      smartContractAbi,
+		UsdtTransferArguments: &args,
+	}
+}
 
 // ToTronAddress converts an Ethereum address to a Tron address.
 func ToTronAddress(addr common.Address) address.Address {
@@ -14,12 +105,4 @@ func ToTronAddress(addr common.Address) address.Address {
 	copy(tronAddress[1:], addr.Bytes())
 
 	return address.Address(tronAddress)
-}
-
-func GetTronContractParamter(contract *core.Transaction_Contract) *ContractParameter {
-
-	param := &ContractParameter{}
-	proto.Unmarshal(contract.Parameter.Value, param)
-
-	return param
 }
