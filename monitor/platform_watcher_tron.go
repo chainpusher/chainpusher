@@ -30,7 +30,7 @@ func (p *PlatformWatcherTron) Start() {
 		}
 
 		log.Printf("Latest block number: %d and transactions %d", latest.BlockHeader.RawData.Number, len(transactions))
-		p.ApplicationService.AnalyzeTrades(transactions)
+		p.ApplicationService.AnalyzeTrade(transactions)
 		p.Number = latest.BlockHeader.RawData.Number + 1
 		break
 	}
@@ -48,7 +48,7 @@ func (p *PlatformWatcherTron) FetchBlocks(number int64) {
 		return
 	}
 	logrus.Infof("Block %d fetched with %d transactions", number, len(transactions))
-	p.ApplicationService.AnalyzeTrades(transactions)
+	p.ApplicationService.AnalyzeTrade(transactions)
 }
 
 func (p *PlatformWatcherTron) WatchBlocks() {
@@ -80,7 +80,7 @@ func (p *PlatformWatcherTron) WatchLatestBlock() {
 func (p *PlatformWatcherTron) Stop() {
 }
 
-func NewPlatformWatcherTron(cfg *config.Config) PlatformWatcher {
+func NewPlatformWatcherTron(cfg *config.Config, application *application.TransactionService) PlatformWatcher {
 	client := client.NewGrpcClient("")
 	client.Start(grpc.WithInsecure())
 	client.SetTimeout(60 * time.Second)
@@ -98,7 +98,7 @@ func NewPlatformWatcherTron(cfg *config.Config) PlatformWatcher {
 		Config:             cfg,
 		done:               make(chan bool),
 		Service:            service,
-		ApplicationService: application.NewTransactionService(config.NewConfigWatchlistRepository(cfg.Wallets)),
+		ApplicationService: application,
 		Number:             -1,
 	}
 }

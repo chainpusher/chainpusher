@@ -13,7 +13,7 @@ type Config struct {
 	}
 	Wallets  []string `json:"wallets"`
 	Telegram struct {
-		Token string `json:"token"`
+		Tokens []string `json:"token"`
 	}
 }
 

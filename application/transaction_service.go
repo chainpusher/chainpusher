@@ -1,6 +1,7 @@
 package application
 
 import (
+	"github.com/chainpusher/chainpusher/config"
 	"github.com/chainpusher/chainpusher/model"
 	"github.com/chainpusher/chainpusher/postoffice"
 	"github.com/sirupsen/logrus"
@@ -12,9 +13,14 @@ type TransactionService struct {
 	Postoffice postoffice.PostOffice
 }
 
-func NewTransactionService(repository model.WatchlistRepository) *TransactionService {
+func NewTransactionService(cfg *config.Config) *TransactionService {
+	watchlist := config.NewConfigWatchlistRepository(cfg.Wallets)
+	t := postoffice.CreateTransportFactory(cfg)
+	ps := postoffice.NewPostOfficeCoroutine(t)
+
 	return &TransactionService{
-		WatchlistRepository: repository,
+		WatchlistRepository: watchlist,
+		Postoffice:          ps,
 	}
 }
 
