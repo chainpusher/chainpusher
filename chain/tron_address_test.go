@@ -4,7 +4,6 @@ import (
 	"encoding/hex"
 	"testing"
 
-	"github.com/fbsobreira/gotron-sdk/pkg/address"
 	"github.com/fbsobreira/gotron-sdk/pkg/common"
 )
 
@@ -19,16 +18,6 @@ func TestAddress(t *testing.T) {
 	if base58encode != adr {
 		t.Error("base58encode != adr")
 	}
-
-	adrHex, err := common.FromHex(adr)
-	adr2 := address.HexToAddress(adr)
-	adrBytes := adr2.Bytes()
-
-	if err != nil {
-		t.Error(err)
-	}
-
-	t.Log(adr, adr2, adrBytes, adrHex, base58decode)
 }
 
 func TestBase58AddressToHex(t *testing.T) {
