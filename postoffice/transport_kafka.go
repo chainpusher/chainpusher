@@ -5,7 +5,7 @@ import "github.com/chainpusher/chainpusher/model"
 type TransportKafka struct {
 }
 
-func (t *TransportKafka) Deliver(transaction *model.Transaction) error {
+func (t *TransportKafka) Deliver(transactions []*model.Transaction) error {
 	return nil
 }
 

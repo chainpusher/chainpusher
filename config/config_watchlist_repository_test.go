@@ -4,19 +4,20 @@ import (
 	"testing"
 
 	"github.com/chainpusher/chainpusher/config"
+	"github.com/chainpusher/chainpusher/model"
 )
 
 func TestIsOnList(t *testing.T) {
 	r := config.NewConfigWatchlistRepository([]string{"wallet1", "wallet2"})
-	if !r.IsOnList("wallet1") {
-		t.Error("Expected wallet1 to be on the list")
+
+	transactions := []*model.Transaction{
+		{Payee: "wallet1"},
+		{Payer: "wallet2"},
+		{Payee: "wallet3"},
 	}
 
-	if r.IsOnList("wallet3") {
-		t.Error("Expected wallet3 to not be on the list")
-	}
-
-	if !r.IsOnList("wallet2") {
-		t.Error("Expected wallet2 to not be on the list")
+	watched := r.In(transactions)
+	if len(watched) != 2 {
+		t.Error("watched is incorrected", watched)
 	}
 }

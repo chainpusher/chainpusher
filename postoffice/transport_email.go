@@ -5,7 +5,7 @@ import "github.com/chainpusher/chainpusher/model"
 type TransportEmail struct {
 }
 
-func (po *TransportEmail) Deliver(transaction *model.Transaction) error {
+func (po *TransportEmail) Deliver(transactions []*model.Transaction) error {
 	return nil
 }
 

@@ -11,7 +11,10 @@ type Config struct {
 	Logger struct {
 		Level string `json:"level"`
 	}
-	Wallets []string `json:"wallets"`
+	Wallets  []string `json:"wallets"`
+	Telegram struct {
+		Token string `json:"token"`
+	}
 }
 
 func ParseConfigFromYaml(file string) (*Config, error) {

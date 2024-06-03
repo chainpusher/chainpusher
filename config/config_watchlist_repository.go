@@ -8,10 +8,20 @@ type ConfigWatchlistRepository struct {
 	Wallets map[string]bool
 }
 
-func (cwr *ConfigWatchlistRepository) IsOnList(address string) bool {
-	watched, exists := cwr.Wallets[address]
-	if !exists {
-		return false
+func (cwr *ConfigWatchlistRepository) In(transactions []*model.Transaction) []*model.Transaction {
+	watched := make([]*model.Transaction, 0)
+
+	for _, transaction := range transactions {
+		var exists bool
+
+		_, exists = cwr.Wallets[transaction.Payer]
+		if !exists {
+			_, exists = cwr.Wallets[transaction.Payee]
+		}
+		if !exists {
+			continue
+		}
+		watched = append(watched, transaction)
 	}
 	return watched
 }

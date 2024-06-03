@@ -18,20 +18,12 @@ func NewTransactionService(repository model.WatchlistRepository) *TransactionSer
 	}
 }
 
-func (t *TransactionService) AnalyzeTrade(transaction *model.Transaction) error {
-	logrus.Tracef("Transfer: %v", transaction.Logging())
+func (t *TransactionService) AnalyzeTrade(transactions []*model.Transaction) error {
+	logrus.Tracef("Transactions: %v", transactions)
 
-	if isOn := t.WatchlistRepository.IsOnList(transaction.Payee); !isOn {
-		return nil
+	if watched := t.WatchlistRepository.In(transactions); len(watched) > 0 {
+		t.Postoffice.Deliver(watched)
 	}
-
-	t.Postoffice.Deliver(transaction)
 
 	return nil
-}
-
-func (t *TransactionService) AnalyzeTrades(transaction []*model.Transaction) {
-	for _, trade := range transaction {
-		t.AnalyzeTrade(trade)
-	}
 }

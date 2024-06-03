@@ -5,5 +5,5 @@ import (
 )
 
 type Postman interface {
-	Deliver(transaction *model.Transaction) error
+	Deliver(transactions []*model.Transaction) error
 }
