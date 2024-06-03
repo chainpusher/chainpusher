@@ -5,6 +5,7 @@ import (
 	"os"
 	"path/filepath"
 	"testing"
+	"time"
 
 	"github.com/chainpusher/chainpusher/model"
 	"github.com/chainpusher/chainpusher/postoffice"
@@ -53,4 +54,5 @@ func TestNewTransportTelegram(t *testing.T) {
 	})
 
 	t.Log("Telegram transport created successfully: ", tg)
+	time.Sleep(10 * time.Second)
 }

@@ -20,12 +20,6 @@ func TestMonitor_Start(t *testing.T) {
 	}
 }
 
-func TestMonitor_IsItDidWatcherRun() {
-	m := monitor.NewDefaultMonitor(&PlatformWatcherTestingFactory{})
-	m.Start()
-
-}
-
 type PlatformWatcherTesting struct {
 }
 
