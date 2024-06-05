@@ -3,6 +3,7 @@ package model
 import (
 	"fmt"
 	"math/big"
+	"time"
 )
 
 type Transaction struct {
@@ -15,6 +16,8 @@ type Transaction struct {
 	Payer string
 
 	Amount big.Int
+
+	CreatedAt time.Time
 }
 
 func (t *Transaction) Logging() string {

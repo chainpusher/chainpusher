@@ -3,6 +3,7 @@ package chain
 import (
 	"errors"
 	"math/big"
+	"time"
 
 	"github.com/chainpusher/chainpusher/model"
 	"github.com/ethereum/go-ethereum/accounts/abi"
@@ -13,7 +14,7 @@ import (
 	"github.com/sirupsen/logrus"
 )
 
-func FromTronTransferContract(tc *core.Transaction_Contract) *model.Transaction {
+func FromTronTransferContract(t *api.TransactionExtention, tc *core.Transaction_Contract) *model.Transaction {
 	var transferContract core.TransferContract
 
 	tc.Parameter.UnmarshalTo(&transferContract)
@@ -28,12 +29,16 @@ func FromTronTransferContract(tc *core.Transaction_Contract) *model.Transaction 
 		Amount:         *amount,
 		Payer:          owner.String(),
 		Payee:          to.String(),
+		CreatedAt:      time.Unix(t.Transaction.RawData.Timestamp, 0),
 	}
 
 	return &transfer
 }
 
-func FromTronTriggerSmartContract(arg *abi.Arguments, tc *core.Transaction_Contract) (*model.Transaction, error) {
+func FromTronTriggerSmartContract(
+	arg *abi.Arguments,
+	t *api.TransactionExtention,
+	tc *core.Transaction_Contract) (*model.Transaction, error) {
 
 	var contract core.TriggerSmartContract
 	err := tc.Parameter.UnmarshalTo(&contract)
@@ -62,18 +67,19 @@ func FromTronTriggerSmartContract(arg *abi.Arguments, tc *core.Transaction_Contr
 			Amount:         *amount,
 			Payer:          address.Address(contract.OwnerAddress).String(),
 			Payee:          tronAddress.String(),
+			CreatedAt:      time.Unix(t.Transaction.RawData.Timestamp, 0),
 		},
 		nil
 }
 
-func FromTronContractToTransaction(args *abi.Arguments, tc *core.Transaction_Contract) (*model.Transaction, error) {
+func FromTronContractToTransaction(args *abi.Arguments, t *api.TransactionExtention, tc *core.Transaction_Contract) (*model.Transaction, error) {
 
 	if tc.GetType() == core.Transaction_Contract_TransferContract {
-		return FromTronTransferContract(tc), nil
+		return FromTronTransferContract(t, tc), nil
 	}
 
 	if tc.GetType() == core.Transaction_Contract_TriggerSmartContract {
-		return FromTronTriggerSmartContract(args, tc)
+		return FromTronTriggerSmartContract(args, t, tc)
 	}
 
 	return nil, errors.New("unknown contract type")
@@ -89,7 +95,7 @@ func ToTransactions(args *abi.Arguments, block *api.BlockExtention) []*model.Tra
 		}
 
 		for _, contract := range contracts {
-			transfer, err := FromTronContractToTransaction(args, contract)
+			transfer, err := FromTronContractToTransaction(args, transaction, contract)
 			if err == nil {
 				transactions = append(transactions, transfer)
 			}
