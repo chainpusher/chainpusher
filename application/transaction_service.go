@@ -15,7 +15,7 @@ type TransactionService struct {
 
 func NewTransactionService(cfg *config.Config) *TransactionService {
 	watchlist := config.NewConfigWatchlistRepository(cfg.Wallets)
-	t := postoffice.CreateTransportFactory(cfg)
+	t := postoffice.NewTransportFromConfig(cfg)
 	ps := postoffice.NewPostOfficeCoroutine(t)
 
 	return &TransactionService{

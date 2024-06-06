@@ -5,7 +5,7 @@ import (
 	"github.com/sirupsen/logrus"
 )
 
-func CreateTelegramTransport(cfg *config.Config) Transport {
+func NewTransportTelegramFromConfig(cfg *config.Config) Transport {
 	if cfg.Telegram.Tokens == nil {
 		return nil
 	}
@@ -15,11 +15,32 @@ func CreateTelegramTransport(cfg *config.Config) Transport {
 	return NewTransportTelegram(cfg.Telegram.Tokens)
 }
 
-func CreateTransportFactory(cfg *config.Config) []Transport {
+func NewTransportHttpFromConfig(cfg *config.Config) Transport {
+	if cfg.Http == nil {
+		return nil
+	}
+	logrus.Info("Creating HTTP transport")
+
+	urls := make([]string, 0)
+	for _, http := range cfg.Http {
+		urls = append(urls, http.Url)
+	}
+
+	defer logrus.Info("HTTP transport created")
+	return NewTransportHttp(urls)
+}
+
+func NewTransportFromConfig(cfg *config.Config) []Transport {
 	transports := make([]Transport, 0)
-	telegram := CreateTelegramTransport(cfg)
+	telegram := NewTransportTelegramFromConfig(cfg)
 	if telegram != nil {
 		transports = append(transports, telegram)
 	}
+
+	http := NewTransportHttpFromConfig(cfg)
+	if http != nil {
+		transports = append(transports, http)
+	}
+
 	return transports
 }
