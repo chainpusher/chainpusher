@@ -2,6 +2,7 @@ package chain_test
 
 import (
 	"context"
+	"encoding/json"
 	"log"
 	"math/big"
 	"strings"
@@ -67,5 +68,28 @@ func TestEthereumAbiParse(t *testing.T) {
 
 	if value.Int64() != int64(expectedAmount) {
 		t.Fatalf("Expected amount: %d, got: %d", expectedAmount, value.Int64())
+	}
+}
+
+func TestEthereumSerialize(t *testing.T) {
+	url, err := chain.GetInfuraApiUrl()
+	if err != nil {
+		t.Log("Failed to get Infura API URL: ", err)
+		return
+	}
+
+	client, err := ethclient.Dial(url)
+	if err != nil {
+		t.Fatal("Failed to dial Infura API: ", err)
+	}
+
+	header, err := client.HeaderByNumber(context.Background(), nil)
+	if err != nil {
+		t.Fatal("Failed to get header: ", err)
+	}
+
+	_, err = json.Marshal(header)
+	if err != nil {
+		t.Fatal("Failed to marshal header: ", err)
 	}
 }
