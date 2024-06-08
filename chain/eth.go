@@ -3,11 +3,14 @@ package chain
 import (
 	"context"
 	"encoding/json"
+	"errors"
 	"fmt"
 	"math/big"
 
 	"github.com/chainpusher/chainpusher/infrastructure"
+	"github.com/chainpusher/chainpusher/model"
 	"github.com/chainpusher/chainpusher/sys"
+	"github.com/ethereum/go-ethereum/common"
 	"github.com/ethereum/go-ethereum/core/types"
 	"github.com/ethereum/go-ethereum/ethclient"
 	"github.com/sirupsen/logrus"
@@ -15,7 +18,7 @@ import (
 
 const (
 	InfuraApiUrl        string = "https://mainnet.infura.io/v3/"
-	EthereumUsdtAddress string = "0xdac17f958d2ee523a2206206994597c13d831ec7"
+	EthereumUsdtAddress string = "0xdAC17F958D2ee523a2206206994597C13D831ec7"
 
 	EthereumUsdtAbi string = `[
 		{
@@ -46,6 +49,13 @@ const (
 	CacheBlockByNumber = "ethereum_block_%s"
 )
 
+var EthereumUsdtMethodTransfer []byte = []byte{0xa9, 0x5, 0x9c, 0xbb}
+
+type EthereumContractUsdtTransfer struct {
+	To    *common.Address
+	Value *big.Int
+}
+
 func GetInfuraApiUrl() (string, error) {
 
 	key, err := sys.GetEnv("INFURA_KEY")
@@ -57,7 +67,8 @@ func GetInfuraApiUrl() (string, error) {
 }
 
 type EthereumBlockChainService struct {
-	Client *ethclient.Client
+	Client    *ethclient.Client
+	Assembler *EthereumServiceAssembler
 }
 
 func (s *EthereumBlockChainService) GetNowBlock() (*types.Header, error) {
@@ -74,6 +85,7 @@ func (s *EthereumBlockChainService) GetBlock(number *big.Int) (*types.Block, err
 
 	cacheBlockKey := fmt.Sprintf(CacheBlockByNumber, number.String())
 	cacheBlock, err := infrastructure.GetKey(cacheBlockKey)
+	err = errors.New("clear the cache")
 	var block *types.Block
 
 	if err == nil {
@@ -83,6 +95,7 @@ func (s *EthereumBlockChainService) GetBlock(number *big.Int) (*types.Block, err
 	}
 
 	block, err = s.Client.BlockByNumber(context.Background(), number)
+
 	if err != nil {
 		return nil, err
 	}
@@ -95,6 +108,16 @@ func (s *EthereumBlockChainService) GetBlock(number *big.Int) (*types.Block, err
 	return block, nil
 }
 
+func (s *EthereumBlockChainService) GetTransactions(number *big.Int) ([]*model.Transaction, error) {
+
+	block, err := s.GetBlock(number)
+	if err != nil {
+		return nil, err
+	}
+
+	return s.Assembler.BlockToTransactions(block), nil
+}
+
 func NewEthereumBlockChainService(url string) (*EthereumBlockChainService, error) {
 
 	client, err := ethclient.Dial(url)
@@ -102,5 +125,13 @@ func NewEthereumBlockChainService(url string) (*EthereumBlockChainService, error
 		return nil, err
 	}
 
-	return &EthereumBlockChainService{Client: client}, nil
+	assembler, err := NewEthereumServiceAssembler()
+	if err != nil {
+		return nil, err
+	}
+
+	return &EthereumBlockChainService{
+		Client:    client,
+		Assembler: assembler,
+	}, nil
 }

@@ -1,12 +1,14 @@
 package chain_test
 
 import (
+	"bytes"
 	"context"
 	"encoding/json"
 	"log"
 	"math/big"
 	"strings"
 	"testing"
+	"time"
 
 	"github.com/chainpusher/chainpusher/chain"
 	"github.com/chainpusher/chainpusher/sys"
@@ -51,6 +53,90 @@ func TestTronBlockChainService_GetNowBlock(t *testing.T) {
 	}
 
 	t.Log(block.Transactions().Len(), b)
+}
+
+func TestEthereumGetTransactionValueGreaterThan(t *testing.T) {
+	t.Log("Current time: ", time.Now())
+	url, err := chain.GetInfuraApiUrl()
+	if err != nil {
+		t.Log("Failed to get Tron API URL: ", err)
+		return
+	}
+	service, err := chain.NewEthereumBlockChainService(url)
+	if err != nil {
+		t.Fatal("Failed to create Ethereum block chain service: ", err)
+		return
+	}
+
+	block, err := service.GetBlock(big.NewInt(20045182))
+	if err != nil {
+		t.Fatal("Failed to get block: ", err)
+		return
+
+	}
+
+	for _, tx := range block.Transactions() {
+		if tx.Value().Cmp(big.NewInt(0)) == 1 {
+			t.Log(tx.Value())
+		}
+	}
+	t.Log("Transactions: ", block.Transactions().Len())
+	t.Log("Current time: ", time.Now())
+}
+
+func TestEthereumGetTransactionOfUSDT(t *testing.T) {
+	t.Log("Current time: ", time.Now())
+	url, err := chain.GetInfuraApiUrl()
+	if err != nil {
+		t.Log("Failed to get Tron API URL: ", err)
+		return
+	}
+	service, err := chain.NewEthereumBlockChainService(url)
+	if err != nil {
+		t.Fatal("Failed to create Ethereum block chain service: ", err)
+		return
+	}
+
+	block, err := service.GetBlock(big.NewInt(20045824))
+	if err != nil {
+		t.Fatal("Failed to get block: ", err)
+		return
+
+	}
+
+	for _, tx := range block.Transactions() {
+
+		if tx.To().String() == chain.EthereumUsdtAddress {
+			// t.Logf("%s and %s", tx.To(), chain.EthereumUsdtAddress)
+			t.Log(tx.Value())
+		}
+	}
+	t.Log("Transactions: ", block.Transactions().Len())
+	t.Log("Current time: ", time.Now())
+}
+
+func TestEthereumGetTransactions(t *testing.T) {
+	t.Log("Current time: ", time.Now())
+	url, err := chain.GetInfuraApiUrl()
+	if err != nil {
+		t.Log("Failed to get Tron API URL: ", err)
+		return
+	}
+	service, err := chain.NewEthereumBlockChainService(url)
+	if err != nil {
+		t.Fatal("Failed to create Ethereum block chain service: ", err)
+		return
+	}
+
+	transactions, err := service.GetTransactions(big.NewInt(20045824))
+
+	if err != nil {
+		t.Fatal("Failed to get transactions: ", err)
+		return
+	}
+
+	t.Log("Transactions: ", len(transactions))
+	t.Log("Current time: ", time.Now())
 }
 
 func TestEthBlockChain_GetNowBlock(t *testing.T) {
@@ -106,6 +192,15 @@ func TestEthereumAbiParse(t *testing.T) {
 
 	if value.Int64() != int64(expectedAmount) {
 		t.Fatalf("Expected amount: %d, got: %d", expectedAmount, value.Int64())
+	}
+}
+
+func TestEthereumDataMethod(t *testing.T) {
+	data := "0xa9059cbb0000000000000000000000005b6d5bb6995a7c21aac64c78a4c5b88470a0b15e0000000000000000000000000000000000000000000000000000000000000001"
+	dataBytes := common.FromHex(data)
+
+	if !bytes.Equal(dataBytes[:4], chain.EthereumUsdtMethodTransfer) {
+		t.Fatalf("Expected method: %v, got: %v", chain.EthereumUsdtMethodTransfer, dataBytes[:4])
 	}
 }
 

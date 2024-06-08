@@ -13,15 +13,15 @@ import (
 func TestTransactionServiceAnalyzeTrade(t *testing.T) {
 	transactions := []*model.Transaction{
 		{
-			Platform:       model.PlatformEtherium,
-			CryptoCurrency: model.Etherium,
+			Platform:       model.PlatformEthereum,
+			CryptoCurrency: model.Ethereum,
 			Payee:          "payee",
 			Payer:          "payer",
 			Amount:         *big.NewInt(100),
 		},
 		{
-			Platform:       model.PlatformEtherium,
-			CryptoCurrency: model.Etherium,
+			Platform:       model.PlatformEthereum,
+			CryptoCurrency: model.Ethereum,
 			Payee:          "payee2",
 			Payer:          "payer2",
 			Amount:         *big.NewInt(200),

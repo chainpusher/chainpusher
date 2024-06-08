@@ -4,7 +4,8 @@ type CryptoCurrency int
 
 const (
 	Bitcoin CryptoCurrency = iota
-	Etherium
+	Ethereum
+	EthereumUSDT
 	Tron
 	TronUSDT
 )
@@ -13,8 +14,8 @@ func (cc CryptoCurrency) String() string {
 	switch cc {
 	case Bitcoin:
 		return "Bitcoin"
-	case Etherium:
-		return "Etherium"
+	case Ethereum:
+		return "Ethereum"
 	case Tron:
 		return "Tron"
 	case TronUSDT:

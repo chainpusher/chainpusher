@@ -4,7 +4,7 @@ type Platform int
 
 const (
 	PlatformBigcoin Platform = iota
-	PlatformEtherium
+	PlatformEthereum
 	PlatformTron
 )
 
@@ -12,8 +12,8 @@ func (p Platform) String() string {
 	switch p {
 	case PlatformBigcoin:
 		return "Bigcoin"
-	case PlatformEtherium:
-		return "Etherium"
+	case PlatformEthereum:
+		return "Ethereum"
 	case PlatformTron:
 		return "Tron"
 	default:
