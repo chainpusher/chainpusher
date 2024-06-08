@@ -15,6 +15,44 @@ import (
 	"github.com/ethereum/go-ethereum/ethclient"
 )
 
+func TestTronBlockChainService_GetNowBlock(t *testing.T) {
+	url, err := chain.GetInfuraApiUrl()
+	if err != nil {
+		t.Log("Failed to get Tron API URL: ", err)
+		return
+	}
+	service, err := chain.NewEthereumBlockChainService(url)
+	if err != nil {
+		t.Fatal("Failed to create Ethereum block chain service: ", err)
+		return
+	}
+	header, err := service.GetNowBlock()
+	if err != nil {
+		t.Fatal("Failed to get header: ", err)
+		return
+	}
+
+	if header.Number.Cmp(big.NewInt(1)) == -1 {
+		t.Fatal("Block number is less than 1")
+	}
+
+	block, err := service.GetBlock(header.Number)
+
+	if err != nil {
+		t.Fatal("Failed to get block: ", err)
+		return
+	}
+
+	b, err := service.GetBlock(big.NewInt(20045182))
+	if err != nil {
+		t.Fatal("Failed to get block: ", err)
+		return
+
+	}
+
+	t.Log(block.Transactions().Len(), b)
+}
+
 func TestEthBlockChain_GetNowBlock(t *testing.T) {
 
 	key, err := sys.GetEnv("INFURA_KEY")
