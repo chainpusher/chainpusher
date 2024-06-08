@@ -66,6 +66,10 @@ func GetInfuraApiUrl() (string, error) {
 	return InfuraApiUrl + key, nil
 }
 
+func GetInfuraApiUrlV2(key string) string {
+	return InfuraApiUrl + key
+}
+
 type EthereumBlockChainService struct {
 	Client    *ethclient.Client
 	Assembler *EthereumServiceAssembler
