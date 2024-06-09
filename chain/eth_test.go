@@ -23,7 +23,7 @@ func TestTronBlockChainService_GetNowBlock(t *testing.T) {
 		t.Log("Failed to get Tron API URL: ", err)
 		return
 	}
-	service, err := chain.NewEthereumBlockChainService(url)
+	service, err := chain.NewEthereumBlockChainService(url, nil)
 	if err != nil {
 		t.Fatal("Failed to create Ethereum block chain service: ", err)
 		return
@@ -62,7 +62,7 @@ func TestEthereumGetTransactionValueGreaterThan(t *testing.T) {
 		t.Log("Failed to get Tron API URL: ", err)
 		return
 	}
-	service, err := chain.NewEthereumBlockChainService(url)
+	service, err := chain.NewEthereumBlockChainService(url, nil)
 	if err != nil {
 		t.Fatal("Failed to create Ethereum block chain service: ", err)
 		return
@@ -91,7 +91,7 @@ func TestEthereumGetTransactionOfUSDT(t *testing.T) {
 		t.Log("Failed to get Tron API URL: ", err)
 		return
 	}
-	service, err := chain.NewEthereumBlockChainService(url)
+	service, err := chain.NewEthereumBlockChainService(url, nil)
 	if err != nil {
 		t.Fatal("Failed to create Ethereum block chain service: ", err)
 		return
@@ -122,7 +122,7 @@ func TestEthereumGetTransactions(t *testing.T) {
 		t.Log("Failed to get Tron API URL: ", err)
 		return
 	}
-	service, err := chain.NewEthereumBlockChainService(url)
+	service, err := chain.NewEthereumBlockChainService(url, nil)
 	if err != nil {
 		t.Fatal("Failed to create Ethereum block chain service: ", err)
 		return

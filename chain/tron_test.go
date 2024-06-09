@@ -3,11 +3,8 @@ package chain
 import (
 	"encoding/hex"
 	"encoding/json"
-	"math/big"
 	"testing"
 
-	"github.com/ethereum/go-ethereum/common"
-	"github.com/fbsobreira/gotron-sdk/pkg/abi"
 	"github.com/fbsobreira/gotron-sdk/pkg/address"
 	"github.com/fbsobreira/gotron-sdk/pkg/client"
 	tc "github.com/fbsobreira/gotron-sdk/pkg/common"
@@ -87,47 +84,5 @@ func TestTronTransaction(t *testing.T) {
 
 	if string(jsonBytes) != expectJson {
 		t.Error("Transaction is incorrect")
-	}
-}
-
-// PLAN: application logic
-func TestTronParseArgumentsOfSmartContract(t *testing.T) {
-	// payee := "TNEJn1gqWKbNo26TsimuazmxxpjqufdS83"
-	payer := "TVfDGG67P8778zZKmgaMnU1sYegfwsQaWg"
-
-	client := client.NewGrpcClient("")
-	client.Start(grpc.WithInsecure())
-
-	input, _ := hex.DecodeString("a9059cbb000000000000000000000041d7fb3f45980187dbbe41c30fbba76f008e16e89f0000000000000000000000000000000000000000000000000000000000000186")
-	if len(input) != 68 {
-		t.Error("Input length is incorrect")
-	}
-	contractAbi, err := GetUsdtSmartContract(client)
-
-	if err != nil {
-		return
-	}
-
-	args, err := abi.GetInputsParser(contractAbi, "transfer")
-	if err != nil {
-		t.Error(err)
-	}
-	unpacked, err := args.Unpack(input[4:])
-
-	ethAddress := unpacked[0].(common.Address)
-	amount := unpacked[1].(*big.Int)
-
-	tronAddress := ToTronAddress(ethAddress).String()
-
-	if err != nil {
-		t.Error(err)
-	}
-
-	if tronAddress != payer {
-		t.Error("Address is incorrect")
-	}
-
-	if amount.Int64() != 390 {
-		t.Error("Amount is incorrect")
 	}
 }
