@@ -35,7 +35,9 @@ func TestEthereumTransactionsSerialize(t *testing.T) {
 	var txs chain.EthereumTransactions = make(chain.EthereumTransactions, len(transactions))
 
 	txs.FromTransactions(block, transactions)
-	jsonBytes, err := json.Marshal(txs)
+
+	var o interface{} = txs
+	jsonBytes, err := json.Marshal(o)
 
 	if err != nil {
 		t.Fatal("Failed to marshal transactions: ", err)
