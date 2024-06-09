@@ -24,16 +24,18 @@ func (p *PlatformWatcherTron) Start() {
 	for {
 		latest, transactions, err := p.Service.GetNowBlock()
 		if err != nil {
-			log.Printf("Error getting block: %v", err)
+			logrus.Errorf("Error getting block: %v", err)
 			time.Sleep(1 * time.Second)
 			continue
 		}
 
-		log.Printf("Latest block number: %d and transactions %d", latest.BlockHeader.RawData.Number, len(transactions))
+		logrus.Debug("Latest block number: %d and transactions %d", latest.BlockHeader.RawData.Number, len(transactions))
 		p.ApplicationService.AnalyzeTrade(transactions)
 		p.Number = latest.BlockHeader.RawData.Number + 1
 		break
 	}
+
+	time.Sleep(3 * time.Second)
 
 	p.WatchBlocks()
 
@@ -47,8 +49,9 @@ func (p *PlatformWatcherTron) FetchBlocks(number int64) {
 		logrus.Warnf("Error getting block: %v", err)
 		return
 	}
-	logrus.Infof("Block %d fetched with %d transactions", number, len(transactions))
+	logrus.Debugf("Block %d fetched with %d transactions", number, len(transactions))
 	p.ApplicationService.AnalyzeTrade(transactions)
+	p.Number++
 }
 
 func (p *PlatformWatcherTron) WatchBlocks() {
@@ -58,7 +61,7 @@ func (p *PlatformWatcherTron) WatchBlocks() {
 			return
 		default:
 			go p.FetchBlocks(p.Number)
-			p.Number++
+
 			time.Sleep(3 * time.Second)
 		}
 
@@ -85,9 +88,9 @@ func NewPlatformWatcherTron(cfg *config.Config, application *application.Transac
 	client.Start(grpc.WithInsecure())
 	client.SetTimeout(60 * time.Second)
 
-	log.Printf("Fetching USDT smart contract ...")
+	logrus.Info("Fetching USDT smart contract ...")
 	usdtSmartContract, err := chain.GetUsdtSmartContract(client)
-	log.Printf("USDT smart contract fetched")
+	logrus.Info("USDT smart contract fetched")
 
 	if err != nil {
 		log.Fatalf("Error getting USDT smart contract: %v", err)

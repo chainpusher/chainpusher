@@ -32,6 +32,7 @@ func TestEthereumWatcher(t *testing.T) {
 	application := application.NewTransactionService(&cfg)
 
 	var waitGroup sync.WaitGroup
+	waitGroup.Add(1)
 	p := monitor.NewPlatformWatcherEthereum(15*time.Second, &waitGroup, service, application)
 	go p.Start()
 	time.Sleep(10 * time.Second)

@@ -25,7 +25,10 @@ func NewTransactionService(cfg *config.Config) *TransactionService {
 }
 
 func (t *TransactionService) AnalyzeTrade(transactions []*model.Transaction) error {
-	logrus.Tracef("Transactions: %v", transactions)
+
+	for _, transaction := range transactions {
+		logrus.Debugf("Transaction: %v", transaction)
+	}
 
 	if watched := t.WatchlistRepository.In(transactions); len(watched) > 0 {
 		t.Postoffice.Deliver(watched)

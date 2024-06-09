@@ -1,9 +1,13 @@
 package config
 
 import (
+	"fmt"
 	"io"
 	"os"
+	"runtime"
+	"strings"
 
+	"github.com/sirupsen/logrus"
 	"gopkg.in/yaml.v3"
 )
 
@@ -22,7 +26,7 @@ type Config struct {
 	}
 	Http []HttpConfig `json:"http"`
 
-	InfuraKey string `json:"infura_key"`
+	InfuraKey string `yaml:"infura_key"`
 }
 
 func ParseConfigFromYamlText(text string) (*Config, error) {
@@ -52,5 +56,16 @@ func ParseConfigFromYaml(file string) (*Config, error) {
 		return nil, err
 	}
 
-	return ParseConfigFromYamlText(string(bytes))
+	text := string(bytes)
+
+	logrus.SetReportCaller(true)
+	logrus.SetFormatter(&logrus.TextFormatter{
+		FullTimestamp: true,
+		CallerPrettyfier: func(f *runtime.Frame) (string, string) {
+			repo := strings.Split(f.File, "/")
+			return fmt.Sprintf("%s()", f.Function), fmt.Sprintf("%s:%d", repo[len(repo)-1], f.Line)
+		},
+	})
+
+	return ParseConfigFromYamlText(text)
 }

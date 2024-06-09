@@ -79,8 +79,17 @@ func (p *PlatformWatcherEthereum) WatchLatestBlock() {
 }
 
 func (p *PlatformWatcherEthereum) Stop() {
+
+	logrus.Info("Stopping ethereum platform watcher ...")
+
 	p.Done <- true
 	close(p.Done)
+
+	if p.waitGroup != nil {
+		p.waitGroup.Done()
+	}
+
+	logrus.Info("Ethereum platform watcher stopped")
 }
 
 func NewPlatformWatcherEthereum(

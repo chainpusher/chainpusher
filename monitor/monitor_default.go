@@ -31,7 +31,7 @@ func (md *MonitorDefault) Start() {
 	for _, platform := range platforms {
 		wg.Add(1)
 
-		md.StartPlatformWithWaitGroup(platform, &wg)
+		go md.StartPlatformWithWaitGroup(platform, &wg)
 	}
 
 	wg.Wait()

@@ -12,6 +12,8 @@ import (
 type MonitorCommand struct {
 	Client  *client.GrpcClient
 	Monitor monitor.Monitor
+
+	monitors []monitor.PlatformWatcher
 }
 
 func (m *MonitorCommand) Execute() error {
