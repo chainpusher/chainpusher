@@ -25,7 +25,7 @@ func TestEthereumWatcher(t *testing.T) {
 		Wallets:   []string{},
 		InfuraKey: chain.GetInfuraApiUrlV2(infuraKey),
 	}
-	service, err := chain.NewEthereumBlockChainService(chain.GetInfuraApiUrlV2(infuraKey))
+	service, err := chain.NewEthereumBlockChainService(chain.GetInfuraApiUrlV2(infuraKey), nil)
 	if err != nil {
 		t.Fatal("Failed to create Ethereum block chain service: ", err)
 	}

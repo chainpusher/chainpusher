@@ -29,7 +29,7 @@ func (p *PlatformWatcherTron) Start() {
 			continue
 		}
 
-		logrus.Debug("Latest block number: %d and transactions %d", latest.BlockHeader.RawData.Number, len(transactions))
+		logrus.Debugf("Latest block number: %d and transactions %d", latest.BlockHeader.RawData.Number, len(transactions))
 		p.ApplicationService.AnalyzeTrade(transactions)
 		p.Number = latest.BlockHeader.RawData.Number + 1
 		break
