@@ -102,10 +102,13 @@ func (a *EthereumServiceAssembler) ToTransaction(t *types.Transaction) *model.Tr
 
 		amount = transfer.Value
 		to = transfer.To.String()
-	} else { // this is a normal transfer
+	} else if t.Value().Cmp(big.NewInt(0)) == 1 { // this is a normal transfer
 		crypto = model.Ethereum
 		to = t.To().String()
 		amount = t.Value()
+	} else { // this is a contract call
+		logrus.Debugf("Contract call: %v", t.Hash().String())
+		return nil
 	}
 
 	return &model.Transaction{
