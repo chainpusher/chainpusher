@@ -3,7 +3,7 @@
 [![codecov](https://codecov.io/github/chainpusher/chainpusher/graph/badge.svg?token=JZE9C481WY)](https://codecov.io/github/chainpusher/chainpusher)
 [![GoDoc](http://img.shields.io/badge/go-documentation-blue.svg?style=flat-square)](https://pkg.go.dev/github.com/chainpusher/chainpusher)
 [![Forum](https://img.shields.io/badge/community-forum-00afd1.svg?style=flat-square)](https://github.com/chainpusher/chainpusher/discussions)
-[![Twitter](https://img.shields.io/badge/twitter-@yoich24526-55acee.svg?style=flat-square)](https://twitter.com/yoicih24526)
+[![Twitter](https://img.shields.io/badge/twitter-@yoichi24526-55acee.svg?style=flat-square)](https://twitter.com/yoichi24526)
 [![License](http://img.shields.io/badge/license-mit-blue.svg?style=flat-square)](https://raw.githubusercontent.com/chainpusher/chainpusher/master/LICENSE.txt)
 
 
