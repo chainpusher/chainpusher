@@ -17,8 +17,9 @@ import (
 )
 
 const (
-	InfuraApiUrl        string = "https://mainnet.infura.io/v3/"
-	EthereumUsdtAddress string = "0xdAC17F958D2ee523a2206206994597C13D831ec7"
+	InfuraApiUrl         string = "https://mainnet.infura.io/v3/"
+	EthereumUsdtAddress  string = "0xdAC17F958D2ee523a2206206994597C13D831ec7"
+	EthereumEmptyAddress string = "0x0000000000000000000000000000000000000000"
 
 	EthereumUsdtAbi string = `[
 		{

@@ -58,33 +58,9 @@ func (a *EthereumServiceAssembler) ToUsdtTransferArguments(data *[]byte) (*Ether
 func (a *EthereumServiceAssembler) ToTransaction(t *types.Transaction) *model.Transaction {
 
 	var crypto model.CryptoCurrency
-	var from string
+	var from string = PraseEthereumTransactionFromAddress(t)
 	var to string
 	var amount *big.Int
-
-	// get sender
-	// the signer is used to get the sender of the transaction
-
-	var signer types.Signer
-	if t.Type() == types.AccessListTxType {
-		signer = types.NewEIP2930Signer(t.ChainId())
-	} else if t.Type() == types.DynamicFeeTxType {
-		signer = types.NewLondonSigner(t.ChainId())
-	} else if t.Type() == types.BlobTxType {
-		logrus.Tracef("Blob transaction: %v", t.Hash().String())
-		return nil
-	} else {
-		signer = types.NewEIP155Signer(t.ChainId())
-	}
-
-	sender, err := types.Sender(signer, t)
-
-	if err != nil {
-		logrus.Error("Failed to get sender: ", err, t.Type())
-		return nil
-	}
-	from = sender.String()
-	// end get sender
 
 	// this is a USDT transfer
 	txTo := t.To()
@@ -134,4 +110,26 @@ func (a *EthereumServiceAssembler) BlockToTransactions(block *types.Block) []*mo
 
 	return transactions
 
+}
+
+func PraseEthereumTransactionFromAddress(t *types.Transaction) string {
+	var signer types.Signer
+	if t.Type() == types.AccessListTxType {
+		signer = types.NewEIP2930Signer(t.ChainId())
+	} else if t.Type() == types.DynamicFeeTxType {
+		signer = types.NewLondonSigner(t.ChainId())
+	} else if t.Type() == types.BlobTxType {
+		logrus.Tracef("Blob transaction: %v", t.Hash().String())
+		return EthereumEmptyAddress
+	} else {
+		signer = types.NewEIP155Signer(t.ChainId())
+	}
+
+	sender, err := types.Sender(signer, t)
+
+	if err != nil {
+		logrus.Error("Failed to get sender: ", err, t.Type())
+		return EthereumEmptyAddress
+	}
+	return sender.String()
 }
