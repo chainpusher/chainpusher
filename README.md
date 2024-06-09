@@ -1,5 +1,13 @@
 # ChainPusher
 
+[![GoDoc](http://img.shields.io/badge/go-documentation-blue.svg?style=flat-square)](https://pkg.go.dev/github.com/chainpusher/chainpusher)
+[![Forum](https://img.shields.io/badge/community-forum-00afd1.svg?style=flat-square)](https://github.com/chainpusher/chainpusher/discussions)
+[![Twitter](https://img.shields.io/badge/twitter-@yoich-55acee.svg?style=flat-square)](https://twitter.com/yoicih)
+[![License](http://img.shields.io/badge/license-mit-blue.svg?style=flat-square)](https://raw.githubusercontent.com/chainpusher/chainpusher/master/LICENSE.txt)
+
+
+
+
 ChainPusher will immediately push the transaction to you when a transaction you care about occurs.
 
 ChainPusher continuously monitors the blockchain network, and whenever a new block is written, it sends you the transaction data you are interested in.
