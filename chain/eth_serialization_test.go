@@ -18,7 +18,7 @@ func TestEthereumTransactionsSerialize(t *testing.T) {
 		t.Log("Failed to get Tron API URL: ", err)
 		return
 	}
-	service, err := chain.NewEthereumBlockChainService(url)
+	service, err := chain.NewEthereumBlockChainService(url, nil)
 	if err != nil {
 		t.Fatal("Failed to create Ethereum block chain service: ", err)
 		return
@@ -33,7 +33,6 @@ func TestEthereumTransactionsSerialize(t *testing.T) {
 	transactions := block.Transactions()
 
 	var txs chain.EthereumTransactions = make(chain.EthereumTransactions, len(transactions))
-
 	txs.FromTransactions(block, transactions)
 
 	var o interface{} = txs

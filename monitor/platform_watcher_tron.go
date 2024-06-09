@@ -83,7 +83,12 @@ func (p *PlatformWatcherTron) WatchLatestBlock() {
 func (p *PlatformWatcherTron) Stop() {
 }
 
-func NewPlatformWatcherTron(cfg *config.Config, application *application.TransactionService) PlatformWatcher {
+func NewPlatformWatcherTron(
+	cfg *config.Config,
+	application *application.TransactionService,
+	channel chan interface{},
+) PlatformWatcher {
+
 	client := client.NewGrpcClient("")
 	client.Start(grpc.WithInsecure())
 	client.SetTimeout(60 * time.Second)
@@ -95,7 +100,7 @@ func NewPlatformWatcherTron(cfg *config.Config, application *application.Transac
 	if err != nil {
 		log.Fatalf("Error getting USDT smart contract: %v", err)
 	}
-	service := chain.NewTronBlockChainService(nil, usdtSmartContract, client)
+	service := chain.NewTronBlockChainService(nil, usdtSmartContract, client, channel)
 
 	return &PlatformWatcherTron{
 		Config:             cfg,

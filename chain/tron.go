@@ -27,6 +27,7 @@ type TronBlockChainService struct {
 	Listner               TransactionListener
 	SmartContractAbi      *core.SmartContract_ABI
 	UsdtTransferArguments *abi.Arguments
+	Channel               chan interface{}
 }
 
 func (service *TronBlockChainService) GetNowBlock() (*api.BlockExtention, []*model.Transaction, error) {
@@ -34,6 +35,14 @@ func (service *TronBlockChainService) GetNowBlock() (*api.BlockExtention, []*mod
 	if err != nil {
 		return nil, nil, err
 	}
+
+	go func(block *api.BlockExtention) {
+		if service.Channel == nil {
+			return
+		}
+
+		service.Channel <- block
+	}(block)
 
 	return block, ToTransactions(service.UsdtTransferArguments, block), nil
 }
@@ -46,9 +55,18 @@ func (service *TronBlockChainService) GetBlock(number int64) ([]*model.Transacti
 		if err != nil {
 			logrus.Warnf("Error getting block: %v", err)
 		} else if block.BlockHeader != nil {
+
+			go func(block *api.BlockExtention) {
+				if service.Channel == nil {
+					return
+				}
+
+				service.Channel <- block
+			}(block)
+
 			return ToTransactions(service.UsdtTransferArguments, block), nil
 		} else {
-			logrus.Warnf("Block not found: %v", number)
+			logrus.Errorf("Block not found: %v", number)
 		}
 
 		logrus.Warnf("Retrying block: %v", number)
@@ -94,7 +112,8 @@ func GetUsdtSmartContract(client *client.GrpcClient) (*core.SmartContract_ABI, e
 func NewTronBlockChainService(
 	listener TransactionListener,
 	smartContractAbi *core.SmartContract_ABI,
-	client *client.GrpcClient) *TronBlockChainService {
+	client *client.GrpcClient,
+	channel chan interface{}) *TronBlockChainService {
 
 	args, err := tcAbi.GetInputsParser(smartContractAbi, "transfer")
 
@@ -108,6 +127,7 @@ func NewTronBlockChainService(
 		Listner:               listener,
 		SmartContractAbi:      smartContractAbi,
 		UsdtTransferArguments: &args,
+		Channel:               channel,
 	}
 }
 

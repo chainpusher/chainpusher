@@ -74,6 +74,7 @@ func GetInfuraApiUrlV2(key string) string {
 type EthereumBlockChainService struct {
 	Client    *ethclient.Client
 	Assembler *EthereumServiceAssembler
+	Channel   chan interface{}
 }
 
 func (s *EthereumBlockChainService) GetNowBlock() (*types.Header, error) {
@@ -101,6 +102,18 @@ func (s *EthereumBlockChainService) GetBlock(number *big.Int) (*types.Block, err
 
 	block, err = s.Client.BlockByNumber(context.Background(), number)
 
+	go func(block *types.Block) {
+		if s.Channel == nil {
+			return
+		}
+
+		// TODO: Convert to block
+		var txs EthereumTransactions = make(EthereumTransactions, len(block.Transactions()))
+		txs.FromTransactions(block, block.Transactions())
+
+		s.Channel <- txs
+	}(block)
+
 	if err != nil {
 		return nil, err
 	}
@@ -123,7 +136,7 @@ func (s *EthereumBlockChainService) GetTransactions(number *big.Int) ([]*model.T
 	return s.Assembler.BlockToTransactions(block), nil
 }
 
-func NewEthereumBlockChainService(url string) (*EthereumBlockChainService, error) {
+func NewEthereumBlockChainService(url string, channel chan interface{}) (*EthereumBlockChainService, error) {
 
 	client, err := ethclient.Dial(url)
 	if err != nil {
@@ -138,5 +151,6 @@ func NewEthereumBlockChainService(url string) (*EthereumBlockChainService, error
 	return &EthereumBlockChainService{
 		Client:    client,
 		Assembler: assembler,
+		Channel:   channel,
 	}, nil
 }

@@ -11,22 +11,23 @@ import (
 )
 
 type PlatformWatcherDefaultFactory struct {
-	Config *config.Config
+	Config  *config.Config
+	Channel chan interface{}
 }
 
 func (p *PlatformWatcherDefaultFactory) CreatePlatformWatcher(platform model.Platform) PlatformWatcher {
 	transactionService := application.NewTransactionService(p.Config)
 
-	infuraApiUrl := chain.GetInfuraApiUrlV2(p.Config.InfuraKey)
-	ethereumService, err := chain.NewEthereumBlockChainService(infuraApiUrl)
-	if err != nil {
-		panic(fmt.Sprintf("Error creating Ethereum service: %v", err))
-	}
-
 	switch platform {
 	case model.PlatformTron:
-		return NewPlatformWatcherTron(p.Config, transactionService)
+		return NewPlatformWatcherTron(p.Config, transactionService, p.Channel)
 	case model.PlatformEthereum:
+		infuraApiUrl := chain.GetInfuraApiUrlV2(p.Config.InfuraKey)
+		ethereumService, err := chain.NewEthereumBlockChainService(infuraApiUrl, p.Channel)
+		if err != nil {
+			panic(fmt.Sprintf("Error creating Ethereum service: %v", err))
+		}
+
 		return NewPlatformWatcherEthereum(
 			15*time.Second,
 			nil,
@@ -39,8 +40,9 @@ func (p *PlatformWatcherDefaultFactory) CreatePlatformWatcher(platform model.Pla
 
 }
 
-func NewPlatformWatcherDefaultFactory(config *config.Config) *PlatformWatcherDefaultFactory {
+func NewPlatformWatcherDefaultFactory(Ctx *Ctx) *PlatformWatcherDefaultFactory {
 	return &PlatformWatcherDefaultFactory{
-		Config: config,
+		Config:  Ctx.Config,
+		Channel: Ctx.Channel,
 	}
 }

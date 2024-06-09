@@ -32,7 +32,17 @@ func NewMonitorCommand(c *config.Config) *MonitorCommand {
 		panic(err)
 	}
 
-	pff := monitor.NewPlatformWatcherDefaultFactory(c)
+	channel := make(chan interface{}, 10000)
+
+	w := monitor.NewBlockLoggingWatcher(channel)
+	w.Start()
+
+	ctx := &monitor.Ctx{
+		Config:  c,
+		Channel: channel,
+	}
+
+	pff := monitor.NewPlatformWatcherDefaultFactory(ctx)
 	m := monitor.NewDefaultMonitor(pff)
 
 	return &MonitorCommand{
