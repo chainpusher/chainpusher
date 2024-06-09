@@ -1,5 +1,6 @@
 # ChainPusher
 
+[![Codecov](https://img.shields.io/codecov/c/github/chainpusher/chainpusher.svg?style=flat-square)](https://codecov.io/gh/chainpusher/chainpusher)
 [![GoDoc](http://img.shields.io/badge/go-documentation-blue.svg?style=flat-square)](https://pkg.go.dev/github.com/chainpusher/chainpusher)
 [![Forum](https://img.shields.io/badge/community-forum-00afd1.svg?style=flat-square)](https://github.com/chainpusher/chainpusher/discussions)
 [![Twitter](https://img.shields.io/badge/twitter-@yoich-55acee.svg?style=flat-square)](https://twitter.com/yoicih)
