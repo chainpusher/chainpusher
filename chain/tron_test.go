@@ -2,6 +2,7 @@ package chain
 
 import (
 	"encoding/hex"
+	"encoding/json"
 	"math/big"
 	"testing"
 
@@ -54,6 +55,8 @@ func TestTronTransactionTransferContract(t *testing.T) {
 // test the transaction of tron
 func TestTronTransaction(t *testing.T) {
 
+	expectJson := `{"id":"W/GjEYDJYiaVKSXjG4U5CvbKWtBikf7Juo1cQBffUQw=","fee":345000,"blockNumber":62207075,"blockTimeStamp":1717264812000,"contractResult":["AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA="],"contract_address":"QaYU+AO2/XgJhqQseOycf3fm3tE8","receipt":{"energy_usage":31895,"energy_usage_total":31895,"net_fee":345000,"result":1,"energy_penalty_total":17245},"log":[{"address":"phT4A7b9eAmGpCx47Jx/d+be0Tw=","topics":["3fJSrRviyJtpwrBo/DeNqpUrp/FjxKEWKPVaTfUjs+8=","AAAAAAAAAAAAAAAAcIv0/OSYo2A3ZPO6SPzwNT+bmdM=","AAAAAAAAAAAAAAAAhnyR0himtkQMSVpaR09soe2AEMU="],"data":"AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAZcHOA="}]}`
+
 	client := client.NewGrpcClient("")
 	client.Start(grpc.WithInsecure())
 
@@ -77,7 +80,14 @@ func TestTronTransaction(t *testing.T) {
 		t.Error("Contract address is incorrect")
 	}
 
-	t.Log(err, addrHex)
+	jsonBytes, err := json.Marshal(transaction)
+	if err != nil {
+		t.Error(err)
+	}
+
+	if string(jsonBytes) != expectJson {
+		t.Error("Transaction is incorrect")
+	}
 }
 
 // PLAN: application logic
