@@ -6,6 +6,7 @@ import (
 	"github.com/chainpusher/chainpusher/config"
 	"github.com/chainpusher/chainpusher/monitor"
 	"github.com/fbsobreira/gotron-sdk/pkg/client"
+	"github.com/sirupsen/logrus"
 	"google.golang.org/grpc"
 )
 
@@ -34,8 +35,13 @@ func NewMonitorCommand(c *config.Config) *MonitorCommand {
 
 	channel := make(chan interface{}, 10000)
 
-	w := monitor.NewBlockLoggingWatcher(channel)
-	w.Start()
+	w := monitor.NewBlockLoggingWatcher(channel, c.BlockLoggingFile)
+	if w == nil {
+		logrus.Warn("Failed to create block logging watcher")
+	} else {
+		logrus.Debug("Block logging watcher created")
+		w.Start()
+	}
 
 	ctx := &monitor.Ctx{
 		Config:  c,

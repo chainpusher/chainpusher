@@ -27,6 +27,10 @@ type Config struct {
 	Http []HttpConfig `json:"http"`
 
 	InfuraKey string `yaml:"infura_key"`
+
+	BlockLoggingFile string `yaml:"logging_file"`
+
+	TransactionLoggingFile string `yaml:"transaction_file"`
 }
 
 func ParseConfigFromYamlText(text string) (*Config, error) {

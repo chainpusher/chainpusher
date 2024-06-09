@@ -10,7 +10,7 @@ import (
 )
 
 func NewMonitorCobraCommand() *cobra.Command {
-	return &cobra.Command{
+	cmd := &cobra.Command{
 		Use:   "monitor",
 		Short: "Monitor blockchain data",
 		Run: func(cmd *cobra.Command, args []string) {
@@ -35,16 +35,23 @@ func NewMonitorCobraCommand() *cobra.Command {
 				}
 			}
 
+			cfg.BlockLoggingFile, _ = cmd.Flags().GetString("block-file")
+
 			SetupLogger(cfg)
 
 			monitor := NewMonitorCommand(cfg)
 			monitor.Execute()
 		},
 	}
+
+	cmd.PersistentFlags().StringP("block-file", "b", "", "File to write raw blockchain data to")
+	cmd.PersistentFlags().StringP("trx-file", "t", "", "File to write transactions to")
+
+	return cmd
 }
 
 func NewRootCommand() *cobra.Command {
-	return &cobra.Command{
+	cmd := &cobra.Command{
 		Use:   "chainpusher",
 		Short: "A CLI tool for pushing blockchain data",
 		Long: "Chainpusher is a CLI tool for pushing blockchain data to a remote server. " +
@@ -53,6 +60,14 @@ func NewRootCommand() *cobra.Command {
 			cmd.Help()
 		},
 	}
+
+	cmd.PersistentFlags().String(
+		"config",
+		"c",
+		"config file (default is $HOME/.chainpusher.yaml)",
+	)
+
+	return cmd
 }
 
 func RunCommand() {
@@ -61,11 +76,6 @@ func RunCommand() {
 	monitorCmd := NewMonitorCobraCommand()
 
 	rootCmd.AddCommand(monitorCmd)
-	rootCmd.PersistentFlags().String(
-		"config",
-		"c",
-		"config file (default is $HOME/.chainpusher.yaml)",
-	)
 
 	if err := rootCmd.Execute(); err != nil {
 		fmt.Println(err)
