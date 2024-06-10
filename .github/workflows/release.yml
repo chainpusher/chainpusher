@@ -3,65 +3,85 @@ name: Release
 on:
   push:
     tags:
-      - '*'
+      - "*"
 
 jobs:
   build:
     name: Build and Release
     runs-on: ubuntu-latest
-    
+
     steps:
-    - name: Checkout code
-      uses: actions/checkout@v2
+      - name: Checkout code
+        uses: actions/checkout@v2
 
-    - name: Cache dependencies
-      uses: actions/cache@v2
-      with:
-        path: ~/.cache/go-build
-        key: ${{ runner.os }}-go-${{ hashFiles('**/go.sum') }}
+      - name: Cache dependencies
+        uses: actions/cache@v2
+        with:
+          path: ~/.cache/go-build
+          key: ${{ runner.os }}-go-${{ hashFiles('**/go.sum') }}
 
-    - name: Set up Go
-      uses: actions/setup-go@v2
-      with:
-        go-version: '1.22' # or whichever version you prefer
+      - name: Set up Go
+        uses: actions/setup-go@v2
+        with:
+          go-version: "1.22" # or whichever version you prefer
 
-    - name: Build for Windows (64-bit)
-      run: GOOS=windows GOARCH=amd64 go build -o chainpusher-windows-amd64.exe
+      - name: Build for Windows (64-bit)
+        run: GOOS=windows GOARCH=amd64 go build -o chainpusher-windows-amd64.exe
 
-    - name: Build for Linux (64-bit)
-      run: GOOS=linux GOARCH=amd64 go build -o chainpusher-linux-amd64
+      - name: Build for Linux (64-bit)
+        run: GOOS=linux GOARCH=amd64 go build -o chainpusher-linux-amd64
 
-    # - name: Build for macOS
-    #   run: GOOS=darwin GOARCH=amd64 go build -o chainpusher-macos-amd64
+      # - name: Build for macOS
+      #   run: GOOS=darwin GOARCH=amd64 go build -o chainpusher-macos-amd64
 
-    # - name: Build for macOS (Apple Silicon)
-    #   run: GOOS=darwin GOARCH=arm64 go build -o chainpusher-macos-arm64
+      # - name: Build for macOS (Apple Silicon)
+      #   run: GOOS=darwin GOARCH=arm64 go build -o chainpusher-macos-arm64
 
-    - name: Create Release
-      id: create_release
-      uses: actions/create-release@v1
-      env:
-        GITHUB_TOKEN: ${{ secrets.PERSONAL_TOKEN }}
-      with:
-        tag_name: ${{ github.ref }}
-        release_name: Release ${{ github.ref }}
-        body: |
-          Description of the release.
-        draft: false
-        prerelease: false
+      - name: Create Release
+        id: create_release
+        uses: actions/create-release@v1
+        env:
+          GITHUB_TOKEN: ${{ secrets.PERSONAL_TOKEN }}
+        with:
+          tag_name: ${{ github.ref }}
+          release_name: Release ${{ github.ref }}
+          body: |
+            Description of the release.
+          draft: false
+          prerelease: false
 
-    - name: Upload Windows (64-bit) binary
-      uses: actions/upload-artifact@v2
-      with:
-        name: chainpusher-windows-amd64.exe
-        path: ./chainpusher-windows-amd64.exe
+      - name: Upload Windows (64-bit) binary
+        uses: actions/upload-artifact@v2
+        with:
+          name: chainpusher-windows-amd64.exe
+          path: ./chainpusher-windows-amd64.exe
 
-    - name: Upload Linux (64-bit) binary
-      uses: actions/upload-artifact@v2
-      with:
-        name: chainpusher-linux-amd64
-        path: ./chainpusher-linux-amd64
+      - name: Upload Linux (64-bit) binary
+        uses: actions/upload-artifact@v2
+        with:
+          name: chainpusher-linux-amd64
+          path: ./chainpusher-linux-amd64
 
+      - name: Upload Release Binary
+        uses: actions/upload-release-asset@v1
+        env:
+          GITHUB_TOKEN: ${{ secrets.PERSONAL_TOKEN }}
+        with:
+          upload_url: ${{ steps.create_release.outputs.upload_url }}
+          asset_path: ${{ github.workspace }}/chainpusher-windows-amd64.exe
+          asset_name: chainpusher-windows-amd64.exe
+          asset_content_type: application/octet-stream
+
+      - name: Upload Release Binary
+        uses: actions/upload-release-asset@v1
+        env:
+            GITHUB_TOKEN: ${{ secrets.PERSONAL_TOKEN }}
+        with:
+          upload_url: ${{ steps.create_release.outputs.upload_url }}
+          asset_path: ${{ github.workspace }}/chainpusher-linux-amd64
+          asset_name: chainpusher-linux-amd64
+          asset_content_type: application/octet-stream
+          
     # - name: Upload macOS binary
     #   uses: actions/upload-artifact@v2
     #   with:
