@@ -51,6 +51,10 @@ func (b *BlcokLoggingWatcher) GetChannel() chan interface{} {
 
 func NewBlockLoggingWatcher(channel chan interface{}, rawFilePath string) BlockWatcher {
 
+	if len(rawFilePath) == 0 {
+		return nil
+	}
+
 	// is absolute path
 	if !path.IsAbs(rawFilePath) {
 		wd, err := os.Getwd()

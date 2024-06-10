@@ -3,6 +3,7 @@ package monitor
 import (
 	"log"
 	"math/big"
+	"os"
 	"sync"
 	"time"
 
@@ -14,10 +15,11 @@ import (
 type PlatformWatcherEthereum struct {
 	Done               chan bool
 	Service            *chain.EthereumBlockChainService
-	ApplicationService *application.TransactionService
+	ApplicationService application.TransactionService
 	Number             *big.Int
 	TimePollingCycle   time.Duration
 	waitGroup          *sync.WaitGroup
+	isOneTime          bool
 }
 
 func (p *PlatformWatcherEthereum) Start() {
@@ -55,6 +57,10 @@ func (p *PlatformWatcherEthereum) FetchBlocks(number *big.Int) {
 
 func (p *PlatformWatcherEthereum) WatchBlocks() {
 	for {
+		if p.isOneTime {
+			time.Sleep(5 * time.Second)
+			os.Exit(0)
+		}
 		select {
 		case <-p.Done:
 			return
@@ -96,7 +102,8 @@ func NewPlatformWatcherEthereum(
 	timePollingCycle time.Duration,
 	waitGroup *sync.WaitGroup,
 	service *chain.EthereumBlockChainService,
-	application *application.TransactionService) PlatformWatcher {
+	application application.TransactionService,
+	isOneTime bool) PlatformWatcher {
 
 	return &PlatformWatcherEthereum{
 		Done:               make(chan bool),
@@ -105,5 +112,6 @@ func NewPlatformWatcherEthereum(
 		Number:             big.NewInt(-1),
 		TimePollingCycle:   timePollingCycle,
 		waitGroup:          waitGroup,
+		isOneTime:          isOneTime,
 	}
 }

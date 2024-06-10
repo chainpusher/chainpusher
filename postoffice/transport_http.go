@@ -58,6 +58,7 @@ func (po *TransportHttp) Deliver(transactions []*model.Transaction) error {
 	payloadBytes, err := json.Marshal(payload)
 	if err != nil {
 		logrus.Warnf("Failed to marshal payload: %v", err)
+		logrus.Debugf("%v", payload)
 		return err
 	}
 
@@ -90,7 +91,7 @@ func (po *TransportHttp) Deliver(transactions []*model.Transaction) error {
 			if err != nil {
 				logrus.Warnf("Failed to read response body: %v", err)
 			}
-			logrus.Info(string(bodyBytes))
+			logrus.Debug(string(bodyBytes))
 
 			logrus.Infof("Delivered message to %s", url)
 		}(url, payloadBytes)

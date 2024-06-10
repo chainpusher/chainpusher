@@ -35,6 +35,11 @@ func NewMonitorCobraCommand() *cobra.Command {
 				}
 			}
 
+			isTesting, err := cmd.Flags().GetBool("test")
+			if err == nil {
+				cfg.IsTesting = isTesting
+			}
+
 			cfg.BlockLoggingFile, _ = cmd.Flags().GetString("block-file")
 
 			SetupLogger(cfg)
@@ -46,6 +51,7 @@ func NewMonitorCobraCommand() *cobra.Command {
 
 	cmd.PersistentFlags().StringP("block-file", "b", "", "File to write raw blockchain data to")
 	cmd.PersistentFlags().StringP("trx-file", "t", "", "File to write transactions to")
+	cmd.PersistentFlags().BoolP("test", "x", false, "Test mode")
 
 	return cmd
 }

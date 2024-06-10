@@ -32,7 +32,7 @@ func TestTransactionServiceAnalyzeTrade(t *testing.T) {
 	transportMock := &TransportMock{called: false}
 	transports := []postoffice.Transport{transportMock}
 	ps := &postoffice.PostOfficeCoroutine{Transports: transports}
-	service := &application.TransactionService{
+	service := &application.DefaultTransactionService{
 		WatchlistRepository: repository,
 		Postoffice:          ps,
 	}

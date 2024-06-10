@@ -2,6 +2,7 @@ package monitor
 
 import (
 	"log"
+	"os"
 	"time"
 
 	"github.com/chainpusher/chainpusher/application"
@@ -16,8 +17,9 @@ type PlatformWatcherTron struct {
 	Config             *config.Config
 	done               chan bool
 	Service            *chain.TronBlockChainService
-	ApplicationService *application.TransactionService
+	ApplicationService application.TransactionService
 	Number             int64
+	isOneTime          bool
 }
 
 func (p *PlatformWatcherTron) Start() {
@@ -62,6 +64,11 @@ func (p *PlatformWatcherTron) WatchBlocks() {
 		default:
 			go p.FetchBlocks(p.Number)
 
+			if p.isOneTime {
+				time.Sleep(5 * time.Second)
+				os.Exit(0)
+			}
+
 			time.Sleep(3 * time.Second)
 		}
 
@@ -81,12 +88,14 @@ func (p *PlatformWatcherTron) WatchLatestBlock() {
 }
 
 func (p *PlatformWatcherTron) Stop() {
+	p.done <- true
 }
 
 func NewPlatformWatcherTron(
 	cfg *config.Config,
-	application *application.TransactionService,
+	application application.TransactionService,
 	channel chan interface{},
+	isOneTime bool,
 ) PlatformWatcher {
 
 	client := client.NewGrpcClient("")
@@ -108,5 +117,6 @@ func NewPlatformWatcherTron(
 		Service:            service,
 		ApplicationService: application,
 		Number:             -1,
+		isOneTime:          isOneTime,
 	}
 }

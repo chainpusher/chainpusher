@@ -36,9 +36,7 @@ func NewMonitorCommand(c *config.Config) *MonitorCommand {
 	channel := make(chan interface{}, 10000)
 
 	w := monitor.NewBlockLoggingWatcher(channel, c.BlockLoggingFile)
-	if w == nil {
-		logrus.Warn("Failed to create block logging watcher")
-	} else {
+	if w != nil {
 		logrus.Debug("Block logging watcher created")
 		w.Start()
 	}

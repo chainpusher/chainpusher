@@ -4,6 +4,7 @@ import (
 	"log"
 
 	"github.com/chainpusher/chainpusher/model"
+	"github.com/sirupsen/logrus"
 )
 
 type PostOfficeCoroutine struct {
@@ -22,10 +23,17 @@ func (p *PostOfficeCoroutine) GetTransports() []Transport {
 
 func (p *PostOfficeCoroutine) Deliver(transactions []*model.Transaction) error {
 
-	log.Println("Delivering transaction", transactions)
+	logrus.Debug("Delivering transaction", transactions)
 
 	for _, transport := range p.GetTransports() {
 		go func(transport Transport) {
+
+			defer func() {
+				if r := recover(); r != nil {
+					log.Println("Recovered from panic", r)
+				}
+			}()
+
 			if transport.Deliver(transactions) != nil {
 				log.Println("Failed to deliver transaction", transactions)
 			}

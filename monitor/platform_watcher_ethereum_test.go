@@ -29,13 +29,13 @@ func TestEthereumWatcher(t *testing.T) {
 	if err != nil {
 		t.Fatal("Failed to create Ethereum block chain service: ", err)
 	}
-	application := application.NewTransactionService(&cfg)
+	application := application.NewDefaultTransactionService(&cfg)
 
 	var waitGroup sync.WaitGroup
 	waitGroup.Add(1)
-	p := monitor.NewPlatformWatcherEthereum(15*time.Second, &waitGroup, service, application)
+	p := monitor.NewPlatformWatcherEthereum(15*time.Second, &waitGroup, service, application, true)
 	go p.Start()
-	time.Sleep(10 * time.Second)
-	p.Stop()
+	// time.Sleep(10 * time.Second)
+	// p.Stop()
 	waitGroup.Wait()
 }
