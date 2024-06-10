@@ -18,7 +18,7 @@ jobs:
     - name: Set up Go
       uses: actions/setup-go@v2
       with:
-        go-version: '1.16' # or whichever version you prefer
+        go-version: '1.22' # or whichever version you prefer
 
     - name: Build for Windows (32-bit)
       run: GOOS=windows GOARCH=386 go build -o chainpusher-windows-386.exe
