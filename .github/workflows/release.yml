@@ -24,14 +24,8 @@ jobs:
       with:
         go-version: '1.22' # or whichever version you prefer
 
-    - name: Build for Windows (32-bit)
-      run: GOOS=windows GOARCH=386 go build -o chainpusher-windows-386.exe
-
     - name: Build for Windows (64-bit)
       run: GOOS=windows GOARCH=amd64 go build -o chainpusher-windows-amd64.exe
-
-    - name: Build for Linux (32-bit)
-      run: GOOS=linux GOARCH=386 go build -o chainpusher-linux-386
 
     - name: Build for Linux (64-bit)
       run: GOOS=linux GOARCH=amd64 go build -o chainpusher-linux-amd64
@@ -55,23 +49,11 @@ jobs:
         draft: false
         prerelease: false
 
-    - name: Upload Windows (32-bit) binary
-      uses: actions/upload-artifact@v2
-      with:
-        name: chainpusher-windows-386.exe
-        path: ./chainpusher-windows-386.exe
-
     - name: Upload Windows (64-bit) binary
       uses: actions/upload-artifact@v2
       with:
         name: chainpusher-windows-amd64.exe
         path: ./chainpusher-windows-amd64.exe
-
-    - name: Upload Linux (32-bit) binary
-      uses: actions/upload-artifact@v2
-      with:
-        name: chainpusher-linux-386
-        path: ./chainpusher-linux-386
 
     - name: Upload Linux (64-bit) binary
       uses: actions/upload-artifact@v2
