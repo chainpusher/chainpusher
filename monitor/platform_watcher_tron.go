@@ -20,13 +20,22 @@ type PlatformWatcherTron struct {
 	ApplicationService application.TransactionService
 	Number             int64
 	isOneTime          bool
+	isRestart          bool
 }
 
 func (p *PlatformWatcherTron) Start() {
+	defer func() {
+		if r := recover(); r != nil {
+			logrus.Errorf("Recovered from panic at the tron watcher: %v", r)
+		}
+	}()
+
+Begin:
 	for {
 		latest, transactions, err := p.Service.GetNowBlock()
+
 		if err != nil {
-			logrus.Errorf("Error getting block: %v", err)
+			logrus.Errorf("Error getting block when get now: %v", err)
 			time.Sleep(1 * time.Second)
 			continue
 		}
@@ -41,7 +50,14 @@ func (p *PlatformWatcherTron) Start() {
 
 	p.WatchBlocks()
 
-	log.Println("Starting Tron platform watcher ...")
+	if p.isRestart {
+		p.isRestart = false
+
+		logrus.Infof("Restarting Tron platform watcher ...")
+		goto Begin
+	}
+
+	logrus.Info("Starting Tron platform watcher ...")
 }
 
 func (p *PlatformWatcherTron) FetchBlocks(number int64) {
@@ -49,7 +65,10 @@ func (p *PlatformWatcherTron) FetchBlocks(number int64) {
 	transactions, err := p.Service.GetBlock(number)
 	if err != nil {
 		logrus.Warnf("Error getting block: %v", err)
-		return
+
+		if err.Error() == "block not found" {
+			p.isRestart = true
+		}
 	}
 	logrus.Debugf("Block %d fetched with %d transactions", number, len(transactions))
 	p.ApplicationService.AnalyzeTrade(transactions)
@@ -67,6 +86,10 @@ func (p *PlatformWatcherTron) WatchBlocks() {
 			if p.isOneTime {
 				time.Sleep(5 * time.Second)
 				os.Exit(0)
+			}
+
+			if p.isRestart {
+				return
 			}
 
 			time.Sleep(3 * time.Second)
@@ -118,5 +141,6 @@ func NewPlatformWatcherTron(
 		ApplicationService: application,
 		Number:             -1,
 		isOneTime:          isOneTime,
+		isRestart:          false,
 	}
 }

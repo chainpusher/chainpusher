@@ -1,6 +1,7 @@
 package chain
 
 import (
+	"encoding/hex"
 	"math/big"
 	"strings"
 	"time"
@@ -74,6 +75,8 @@ func (a *EthereumServiceAssembler) ToTransaction(t *types.Transaction) *model.Tr
 		transfer, err := a.ToUsdtTransferArguments(&data)
 		if err != nil {
 			logrus.Error("Failed to parse transfer arguments: ", err)
+			logrus.Debugf("Data: %s", hex.EncodeToString(data))
+			return nil
 		}
 
 		amount = transfer.Value
@@ -83,7 +86,7 @@ func (a *EthereumServiceAssembler) ToTransaction(t *types.Transaction) *model.Tr
 		to = t.To().String()
 		amount = t.Value()
 	} else { // this is a contract call
-		logrus.Debugf("Contract call: %v", t.Hash().String())
+		logrus.Tracef("Contract call that is not USDT contract: %v", t.Hash().String())
 		return nil
 	}
 

@@ -49,11 +49,12 @@ func (service *TronBlockChainService) GetNowBlock() (*api.BlockExtention, []*mod
 
 func (service *TronBlockChainService) GetBlock(number int64) ([]*model.Transaction, error) {
 
+	logrus.Debug("Fetching block ", number)
 	for i := 0; i < 10; i++ {
 		block, err := service.Client.GetBlockByNum(number)
 
 		if err != nil {
-			logrus.Warnf("Error getting block: %v", err)
+			logrus.Warnf("Error getting block %d: %v", number, err)
 		} else if block.BlockHeader != nil {
 
 			go func(block *api.BlockExtention) {
@@ -66,10 +67,11 @@ func (service *TronBlockChainService) GetBlock(number int64) ([]*model.Transacti
 
 			return ToTransactions(service.UsdtTransferArguments, block), nil
 		} else {
-			logrus.Errorf("Block not found: %v", number)
+			logrus.Errorf("Block not found: %v. block description: %v", number, block)
+			time.Sleep(1 * time.Second)
+			return nil, errors.New("block not found")
 		}
 
-		logrus.Warnf("Retrying block: %v", number)
 		time.Sleep(1 * time.Second)
 	}
 

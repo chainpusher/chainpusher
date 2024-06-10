@@ -1,7 +1,6 @@
 package monitor
 
 import (
-	"log"
 	"math/big"
 	"os"
 	"sync"
@@ -28,7 +27,7 @@ func (p *PlatformWatcherEthereum) Start() {
 	for {
 		header, err := p.Service.GetNowBlock()
 		if err != nil {
-			log.Printf("Error getting block: %v", err)
+			logrus.Debugf("Error getting block when get now: %v", err)
 			time.Sleep(1 * time.Second)
 			continue
 		}
