@@ -37,6 +37,8 @@ func (b *BlcokLoggingWatcher) Start() {
 					logrus.Errorf("Error marshalling block: %v", err)
 				}
 
+				logrus.Debugf("Write block to file, that size is %d", len(serialized))
+
 				b.Descriptor.Write(serialized)
 				b.Descriptor.Write(NewLineByte)
 			}
