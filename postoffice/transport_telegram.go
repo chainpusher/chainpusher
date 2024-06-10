@@ -32,6 +32,7 @@ type TransportTelegram struct {
 
 func NewTelegramBot(token interface{}) (*TelegramBot, error) {
 	var textToken string
+	var tokenIsObject bool = false
 	wasUpdated := false
 
 	httpProxy, err := sys.GetEnv("HTTP_PROXY")
@@ -51,6 +52,7 @@ func NewTelegramBot(token interface{}) (*TelegramBot, error) {
 		textToken = t
 	case map[string]interface{}:
 		textToken = t["token"].(string)
+		tokenIsObject = true
 	}
 
 	bot, err = tgbotapi.NewBotAPIWithClient(textToken, tgbotapi.APIEndpoint, httpClient)
@@ -63,7 +65,8 @@ func NewTelegramBot(token interface{}) (*TelegramBot, error) {
 	logrus.Debug("Authorized on account ", bot.Self.UserName)
 
 	var chatIdentifications []int64 = make([]int64, 0)
-	if token.(map[string]interface{})["chat_id"] != nil {
+
+	if tokenIsObject && token.(map[string]interface{})["chat_id"] != nil {
 
 		switch anyChat := token.(map[string]interface{})["chat_id"]; anyChat.(type) {
 		case int:

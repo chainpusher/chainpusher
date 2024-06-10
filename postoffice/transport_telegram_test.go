@@ -31,11 +31,11 @@ func TestNewTransportTelegram(t *testing.T) {
 		return
 	}
 
-	tg := postoffice.NewTransportTelegram([]interface{}{token}).(*postoffice.TransportTelegram)
+	tokens := []string{token}
+	anyTokens := make([]interface{}, len(tokens))
+	anyTokens[0] = tokens[0]
 
-	if err != nil {
-		t.Error("Failed to create Telegram transport: ", err)
-	}
+	tg := postoffice.NewTransportTelegram(anyTokens).(*postoffice.TransportTelegram)
 
 	tg.Deliver([]*model.Transaction{
 		{
@@ -55,7 +55,7 @@ func TestNewTransportTelegram(t *testing.T) {
 	})
 
 	t.Log("Telegram transport created successfully: ", tg)
-	time.Sleep(10 * time.Second)
+	time.Sleep(5 * time.Second)
 }
 
 // test when token is an object
@@ -75,10 +75,14 @@ func TestNewTransportTelegramObject(t *testing.T) {
 
 	token := tokens[0].(map[string]interface{})
 
-	_, err := postoffice.NewTelegramBot(token)
+	bot, err := postoffice.NewTelegramBot(token)
 
 	if err != nil {
 		t.Error("Failed to create Telegram bot: ", err)
+	}
+
+	if bot == nil {
+		t.Error("Expected bot")
 	}
 
 	t.Log("Telegram bot created successfully")
