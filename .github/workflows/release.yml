@@ -30,8 +30,8 @@ jobs:
     - name: Build for Linux (64-bit)
       run: GOOS=linux GOARCH=amd64 go build -o chainpusher-linux-amd64
 
-    - name: Build for macOS
-      run: GOOS=darwin GOARCH=amd64 go build -o chainpusher-macos-amd64
+    # - name: Build for macOS
+    #   run: GOOS=darwin GOARCH=amd64 go build -o chainpusher-macos-amd64
 
     - name: Build for macOS (Apple Silicon)
       run: GOOS=darwin GOARCH=arm64 go build -o chainpusher-macos-arm64
@@ -61,11 +61,11 @@ jobs:
         name: chainpusher-linux-amd64
         path: ./chainpusher-linux-amd64
 
-    - name: Upload macOS binary
-      uses: actions/upload-artifact@v2
-      with:
-        name: chainpusher-macos-amd64
-        path: ./chainpusher-macos-amd64
+    # - name: Upload macOS binary
+    #   uses: actions/upload-artifact@v2
+    #   with:
+    #     name: chainpusher-macos-amd64
+    #     path: ./chainpusher-macos-amd64
 
     - name: Upload macOS (Apple Silicon) binary
       uses: actions/upload-artifact@v2
