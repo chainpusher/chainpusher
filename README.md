@@ -121,9 +121,10 @@ This section is used to configure integration with the Telegram messaging platfo
     tokens:
       - token: "<token_1>"
       - token: "<token_2>"
-        user:
+        chat_id:
           - "<user_id_1>"
           - "<user_id_2>"
+      - "<token_3>"
   ```
 
 ### `tokens`
@@ -144,22 +145,22 @@ This field specifies the Telegram bot tokens used for authentication.
 
 Each item in the `tokens` array represents a Telegram bot token. If you have multiple bot tokens, you can specify them in this array.
 
-#### `user`
+#### `chat_id`
 
-This field specifies the user IDs or chat IDs that will receive notifications from the corresponding bot.
+This field specifies the chat IDs that will receive notifications from the corresponding bot.
 
 - **Type**: Array of int
 - **Required**: Conditional (required if user-specific notifications are needed)
 - **Example**:
   ```yml
-  user:
-    - "<user_id_1>"
-    - "<user_id_2>"
+  chat_id:
+    - "<chat_id_1>"
+    - "<chat_id_2>"
   ```
 
-Each item in the `user` array should be a valid Telegram user ID or chat ID. These IDs will receive notifications from the bot associated with the corresponding token.
+Each item in the `chat_id` array should be a valid Telegram chat ID. These IDs will receive notifications from the bot associated with the corresponding token.
 
-Ensure that your Telegram bot has the necessary permissions to send messages to the specified users or chat groups. Depending on your application, you may need to configure privacy settings or grant additional permissions to the bot.
+Ensure that your Telegram bot has the necessary permissions to send messages to the specified chat groups. Depending on your application, you may need to configure privacy settings or grant additional permissions to the bot.
 
 ## `http`
 

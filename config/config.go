@@ -18,7 +18,7 @@ type Config struct {
 	}
 	Wallets  []string `json:"wallets"`
 	Telegram struct {
-		Tokens []string `json:"token"`
+		Tokens []interface{} `json:"token"`
 	}
 	Http []HttpConfig `json:"http"`
 

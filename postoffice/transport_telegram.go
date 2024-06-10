@@ -20,13 +20,19 @@ type TelegramBot struct {
 	ChatIdentifications []int64
 
 	Client *tgbotapi.BotAPI
+
+	Token string
+
+	WasUpdated bool
 }
 
 type TransportTelegram struct {
 	Bots map[string]*TelegramBot
 }
 
-func NewTelegramBot(token string) (*TelegramBot, error) {
+func NewTelegramBot(token interface{}) (*TelegramBot, error) {
+	var textToken string
+	wasUpdated := false
 
 	httpProxy, err := sys.GetEnv("HTTP_PROXY")
 	if nil == err {
@@ -39,39 +45,69 @@ func NewTelegramBot(token string) (*TelegramBot, error) {
 			Proxy: http.ProxyFromEnvironment,
 		},
 	}
-	bot, err = tgbotapi.NewBotAPIWithClient(token, tgbotapi.APIEndpoint, httpClient)
+
+	switch t := token.(type) {
+	case string:
+		textToken = t
+	case map[string]interface{}:
+		textToken = t["token"].(string)
+	}
+
+	bot, err = tgbotapi.NewBotAPIWithClient(textToken, tgbotapi.APIEndpoint, httpClient)
 
 	if err != nil {
-		logrus.Warnf("Failed to create Telegram bot with token %s: %v", token, err)
+		logrus.Warnf("Failed to create Telegram bot with token (%s): %v", textToken, err)
 		return nil, err
 	}
 
 	logrus.Debug("Authorized on account ", bot.Self.UserName)
-	updates, err := bot.GetUpdates(tgbotapi.UpdateConfig{
-		Offset:  0,
-		Limit:   10,
-		Timeout: 10,
-	})
-	logrus.Debug("Updates: ", updates)
-
-	if err != nil {
-		logrus.Warnf("Failed to get updates for Telegram bot with token %s: %v", token, err)
-		return nil, err
-	}
 
 	var chatIdentifications []int64 = make([]int64, 0)
-	for _, update := range updates {
-		chatIdentifications = append(chatIdentifications, update.Message.Chat.ID)
+	if token.(map[string]interface{})["chat_id"] != nil {
+
+		switch anyChat := token.(map[string]interface{})["chat_id"]; anyChat.(type) {
+		case int:
+			chatIdentifications = append(chatIdentifications, int64(anyChat.(int)))
+		case []interface{}:
+			for _, chat := range anyChat.([]interface{}) {
+				chatIdentifications = append(chatIdentifications, int64(chat.(int)))
+			}
+		}
+	} else {
+
+		updates, err := bot.GetUpdates(tgbotapi.UpdateConfig{
+			Offset:  0,
+			Limit:   10,
+			Timeout: 10,
+		})
+		wasUpdated = true
+		logrus.Debug("Updates: ", updates)
+
+		if err != nil {
+			logrus.Warnf("Failed to get updates for Telegram bot with token %s: %v", token, err)
+			chatIdentifications = append(chatIdentifications, 0)
+		} else {
+			for _, update := range updates {
+				chatIdentifications = append(chatIdentifications, update.Message.Chat.ID)
+			}
+		}
 	}
+
 	logrus.Debug("Chat identifications: ", chatIdentifications)
 
-	return &TelegramBot{
+	tgBot := &TelegramBot{
 		ChatIdentifications: chatIdentifications,
 		Client:              bot,
-	}, nil
+		Token:               textToken,
+		WasUpdated:          wasUpdated,
+	}
+
+	tgBot.ChatIdentifications = chatIdentifications
+
+	return tgBot, nil
 }
 
-func NewTransportTelegram(tokens []string) Transport {
+func NewTransportTelegram(tokens []interface{}) Transport {
 	if called {
 		logrus.Debug("Did not create Telegram transport because it was already created.")
 		creating.Wait()
@@ -90,7 +126,20 @@ func NewTransportTelegram(tokens []string) Transport {
 			continue
 		}
 
-		bots[token] = bot
+		if bot == nil {
+			logrus.Warn("Failed to create Telegram bot with token ", token)
+			continue
+		}
+
+		var textToken string
+		switch token.(type) {
+		case string:
+			textToken = token.(string)
+		case map[string]interface{}:
+			textToken = token.(map[string]interface{})["token"].(string)
+		}
+
+		bots[textToken] = bot
 	}
 
 	logrus.Debug("Created Telegram transport with ", len(bots), " bots")
