@@ -2,8 +2,6 @@ name: Release
 
 on:
   push:
-    # tags:
-    #   - 'v*' # Trigger on tags like v1.0.0
     branches: [ master ]
 
 jobs:
@@ -14,6 +12,12 @@ jobs:
     steps:
     - name: Checkout code
       uses: actions/checkout@v2
+
+    - name: Cache dependencies
+      uses: actions/cache@v2
+      with:
+        path: ~/.cache/go-build
+        key: ${{ runner.os }}-go-${{ hashFiles('**/go.sum') }}
 
     - name: Set up Go
       uses: actions/setup-go@v2
