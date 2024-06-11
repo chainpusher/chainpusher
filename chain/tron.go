@@ -53,6 +53,9 @@ func (service *TronBlockChainService) GetBlock(number int64) ([]*model.Transacti
 	for i := 0; i < 10; i++ {
 		block, err := service.Client.GetBlockByNum(number)
 
+		created := block.BlockHeader.RawData.Timestamp
+		logrus.Debugf("Block %d at %s", number, time.Unix(created/1000, created%1000))
+
 		if err != nil {
 			logrus.Warnf("Error getting block %d: %v", number, err)
 		} else if block.BlockHeader != nil {

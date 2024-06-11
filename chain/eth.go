@@ -6,6 +6,7 @@ import (
 	"errors"
 	"fmt"
 	"math/big"
+	"time"
 
 	"github.com/chainpusher/chainpusher/infrastructure"
 	"github.com/chainpusher/chainpusher/model"
@@ -129,6 +130,8 @@ func (s *EthereumBlockChainService) GetBlock(number *big.Int) (*types.Block, err
 func (s *EthereumBlockChainService) GetTransactions(number *big.Int) ([]*model.Transaction, error) {
 
 	block, err := s.GetBlock(number)
+	createdAt := int64(block.Header().Time)
+	logrus.Debugf("Block %d at %s", number.Int64(), time.Unix(createdAt, 0))
 	if err != nil {
 		return nil, err
 	}
