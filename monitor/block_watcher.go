@@ -23,28 +23,44 @@ type BlcokLoggingWatcher struct {
 }
 
 func (b *BlcokLoggingWatcher) Start() {
-	go func() {
-		for {
-			select {
-			case block, ok := <-b.GetChannel():
-				if !ok {
-					logrus.Warn("Channel closed")
-					return
-				}
+	go b.Forever()
+}
 
-				serialized, err := json.Marshal(block)
-				if err != nil {
-					logrus.Errorf("Error marshalling block: %v", err)
-				}
-
-				logrus.Debugf("Write block to file, that size is %d", len(serialized))
-
-				b.Descriptor.Write(serialized)
-				b.Descriptor.Write(NewLineByte)
+func (b *BlcokLoggingWatcher) Forever() {
+	for {
+		select {
+		case block, ok := <-b.GetChannel():
+			if !ok {
+				logrus.Warn("The channel had been closed")
+				return
 			}
-		}
-	}()
 
+			b.WriteBlock(block)
+		}
+	}
+}
+
+func (b *BlcokLoggingWatcher) WriteBlock(block interface{}) {
+	serialized, err := json.Marshal(block)
+	if err != nil {
+		logrus.Errorf("Error marshalling block: %v", err)
+		return
+	}
+
+	logrus.Debugf("Write block to file, that size is %d", len(serialized))
+
+	serializationWritten, err := b.Descriptor.Write(serialized)
+	if err != nil {
+		logrus.Errorf("Error writing block: %v", err)
+		logrus.Debugf("Written %d bytes, data is %s", serializationWritten, serialized)
+		return
+	}
+
+	b.Descriptor.Write(NewLineByte)
+}
+
+func (b *BlcokLoggingWatcher) Close() {
+	b.Descriptor.Close()
 }
 
 func (b *BlcokLoggingWatcher) GetChannel() chan interface{} {
@@ -69,7 +85,7 @@ func NewBlockLoggingWatcher(channel chan interface{}, rawFilePath string) BlockW
 	}
 	logrus.Debugf("Block logging file path: %s", rawFilePath)
 
-	fd, err := os.OpenFile(rawFilePath, os.O_CREATE|os.O_WRONLY, 0644)
+	fd, err := os.OpenFile(rawFilePath, os.O_APPEND|os.O_CREATE|os.O_WRONLY, 0644)
 	if err != nil {
 		logrus.Errorf("Error opening file: %v", err)
 	}
