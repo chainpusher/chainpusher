@@ -92,14 +92,6 @@ func GetUsdtSmartContract(client *client.GrpcClient) (*core.SmartContract_ABI, e
 		log.Printf("Contract ABI fetched from cache")
 	}
 
-	// TODO: Implement the following code
-	// if err == nil {
-	// 	err := proto.Unmarshal(contractAbiBytes, contractAbi)
-	// 	if err != nil {
-	// 		log.Fatalf("Error unmarshaling contract ABI: %v", err)
-	// 	}
-	// }
-
 	contractAbi, err = client.GetContractABI(TronUsdtAddress)
 	if err != nil {
 		log.Fatalf("Error getting contract ABI: %v", err)

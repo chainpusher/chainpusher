@@ -1,6 +1,7 @@
 package chain
 
 import (
+	"encoding/hex"
 	"errors"
 	"math/big"
 	"time"
@@ -8,6 +9,7 @@ import (
 	"github.com/chainpusher/chainpusher/model"
 	"github.com/ethereum/go-ethereum/accounts/abi"
 	"github.com/ethereum/go-ethereum/common"
+	tcAbi "github.com/fbsobreira/gotron-sdk/pkg/abi"
 	"github.com/fbsobreira/gotron-sdk/pkg/address"
 	"github.com/fbsobreira/gotron-sdk/pkg/proto/api"
 	"github.com/fbsobreira/gotron-sdk/pkg/proto/core"
@@ -104,4 +106,54 @@ func ToTransactions(args *abi.Arguments, block *api.BlockExtention) []*model.Tra
 	}
 
 	return transactions
+}
+
+type TronBlockChainAssembler struct {
+
+	// The arguments it's of transfer function of contract
+	arguments *abi.Arguments
+}
+
+func (a *TronBlockChainAssembler) GetSmartContractABITransferArguments(
+	service *TronV2BlockChainService,
+) (*abi.Arguments, error) {
+
+	if a.arguments != nil {
+		return a.arguments, nil
+	}
+
+	abi, err := service.GetSmartContractABI(TronUsdtAddress)
+	if err != nil {
+		return nil, err
+	}
+	args, err := tcAbi.GetInputsParser(abi, "transfer")
+	if err != nil {
+		return nil, err
+	}
+
+	a.arguments = &args
+
+	return &args, nil
+}
+
+func (a *TronBlockChainAssembler) ToBlock(
+	block *api.BlockExtention,
+	service *TronV2BlockChainService,
+) (*model.Block, error) {
+
+	if block.BlockHeader == nil {
+		return nil, errors.New("block header is nil")
+	}
+	args, err := a.GetSmartContractABITransferArguments(service)
+	if err != nil {
+		return nil, err
+	}
+	transactions := ToTransactions(args, block)
+
+	aBlock := &model.Block{
+		Height:       big.NewInt(block.BlockHeader.RawData.Number),
+		Id:           hex.EncodeToString(block.Blockid),
+		Transactions: transactions,
+	}
+	return aBlock, nil
 }

@@ -3,6 +3,7 @@ package chain
 import (
 	"encoding/hex"
 	"encoding/json"
+	"math"
 	"testing"
 
 	"github.com/fbsobreira/gotron-sdk/pkg/address"
@@ -84,5 +85,44 @@ func TestTronTransaction(t *testing.T) {
 
 	if string(jsonBytes) != expectJson {
 		t.Error("Transaction is incorrect")
+	}
+}
+
+func TestTron_BlockNotFound(t *testing.T) {
+	client := client.NewGrpcClient("")
+	client.Start(grpc.WithInsecure())
+
+	height := math.MaxInt64
+	block, err := client.GetBlockByNum(int64(height))
+
+	if err != nil {
+		t.Error(err)
+	}
+
+	if block == nil {
+		t.Error("Block is incorrect")
+	}
+
+	if block.BlockHeader != nil {
+		t.Error("Block id is incorrect")
+	}
+}
+
+func TestTron_GenesisBlock(t *testing.T) {
+	client := client.NewGrpcClient("")
+	client.Start(grpc.WithInsecure())
+
+	block, err := client.GetBlockByNum(1)
+
+	if err != nil {
+		t.Error(err)
+	}
+
+	if block == nil {
+		t.Error("Block is incorrect")
+	}
+
+	if block.BlockHeader.RawData.Number != 1 {
+		t.Error("Block id is incorrect")
 	}
 }
