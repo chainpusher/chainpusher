@@ -5,7 +5,6 @@ import (
 
 	"github.com/chainpusher/blockchain/model"
 	"github.com/chainpusher/blockchain/service"
-	"github.com/chainpusher/chainpusher/config"
 	"github.com/chainpusher/chainpusher/monitor"
 	"github.com/sirupsen/logrus"
 )
@@ -62,7 +61,8 @@ func (m *MonitorCommand) Stop() {
 
 }
 
-func NewMonitorCommand(c *config.Config) *MonitorCommand {
+func NewMonitorCommand(ctx *monitor.Ctx) *MonitorCommand {
+	c := ctx.Config
 	channel := make(chan interface{}, 10000)
 
 	w := monitor.NewBlockLoggingWatcher(channel, c.BlockLoggingFile)
@@ -71,10 +71,8 @@ func NewMonitorCommand(c *config.Config) *MonitorCommand {
 		w.Start()
 	}
 
-	ctx := &monitor.Ctx{
-		Config:  c,
-		Channel: channel,
-	}
+	ctx.Config = c
+	ctx.Channel = channel
 
 	return &MonitorCommand{
 		ctx:      ctx,

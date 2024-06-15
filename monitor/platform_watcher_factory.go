@@ -38,11 +38,11 @@ func NewPlatformWatcher(ctx *Ctx, platform model.Platform) (*PlatformWatcher, er
 	}
 
 	return &PlatformWatcher{
-		Config:                ctx.Config,
+		config:                ctx.Config,
 		done:                  make(chan bool),
-		Service:               blockChainService,
-		ApplicationService:    transactionService,
-		Number:                big.NewInt(-1),
+		service:               blockChainService,
+		applicationService:    transactionService,
+		number:                big.NewInt(-1),
 		once:                  ctx.Config.IsTesting,
 		isRestart:             false,
 		timeForBlockGenerated: timeForBlockGenerated,

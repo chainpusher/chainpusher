@@ -2,6 +2,8 @@ package commands
 
 import (
 	"fmt"
+	"github.com/chainpusher/blockchain/service"
+	monitor2 "github.com/chainpusher/chainpusher/monitor"
 	"github.com/sirupsen/logrus"
 	"log"
 	"os"
@@ -10,7 +12,11 @@ import (
 	"github.com/spf13/cobra"
 )
 
-func NewMonitorCobraCommand() *cobra.Command {
+type MonitorCommandOptions struct {
+	listeners []service.BlockListener
+}
+
+func NewMonitorCobraCommand(options MonitorCommandOptions) *cobra.Command {
 	cmd := &cobra.Command{
 		Use:   "monitor",
 		Short: "Monitor blockchain data",
@@ -45,7 +51,12 @@ func NewMonitorCobraCommand() *cobra.Command {
 
 			SetupLogger(cfg)
 
-			monitor := NewMonitorCommand(cfg)
+			ctx := monitor2.Ctx{
+				Config:    cfg,
+				Listeners: options.listeners,
+			}
+
+			monitor := NewMonitorCommand(&ctx)
 			err = monitor.Execute()
 			if err != nil {
 				return
@@ -82,8 +93,15 @@ func NewRootCommand() *cobra.Command {
 
 func RunCommand() {
 
+	RunCommandWithOptions(MonitorCommandOptions{
+		listeners: []service.BlockListener{},
+	})
+}
+
+func RunCommandWithOptions(options MonitorCommandOptions) {
+
 	rootCmd := NewRootCommand()
-	monitorCmd := NewMonitorCobraCommand()
+	monitorCmd := NewMonitorCobraCommand(options)
 
 	rootCmd.AddCommand(monitorCmd)
 
@@ -91,4 +109,5 @@ func RunCommand() {
 		fmt.Println(err)
 		os.Exit(1)
 	}
+
 }

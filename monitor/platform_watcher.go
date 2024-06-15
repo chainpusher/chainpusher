@@ -13,11 +13,11 @@ import (
 )
 
 type PlatformWatcher struct {
-	Config                *config.Config
+	config                *config.Config
 	done                  chan bool
-	Service               service.BlockChainService
-	ApplicationService    application.AnalysisService
-	Number                *big.Int
+	service               service.BlockChainService
+	applicationService    application.AnalysisService
+	number                *big.Int
 	once                  bool
 	isRestart             bool
 	timeForBlockGenerated time.Duration
@@ -41,14 +41,14 @@ func (p *PlatformWatcher) Start() {
 }
 
 func (p *PlatformWatcher) FetchBlocks() error {
-	logrus.Debugf("%s: Fetching block %d.", p.platform.String(), p.Number)
+	logrus.Debugf("%s: Fetching block %d.", p.platform.String(), p.number)
 
 	var block *model.Block
 	var err error
-	var height *big.Int = p.Number
+	var height *big.Int = p.number
 
-	if p.Number.Cmp(big.NewInt(1)) == -1 {
-		block, err = p.Service.GetLatestBlock()
+	if p.number.Cmp(big.NewInt(1)) == -1 {
+		block, err = p.service.GetLatestBlock()
 	} else {
 		block, err = p.RunUntilNothingIsNotFound(height)
 	}
@@ -58,17 +58,17 @@ func (p *PlatformWatcher) FetchBlocks() error {
 	}
 
 	logrus.Debugf("%s: Block %d fetched (at %v) with %d transactions", p.platform.String(),
-		p.Number, block.CreatedAt, len(block.Transactions))
+		p.number, block.CreatedAt, len(block.Transactions))
 
-	p.Number = block.Height.Add(block.Height, big.NewInt(1))
-	err = p.ApplicationService.AnalyzeTrade(block)
+	p.number = block.Height.Add(block.Height, big.NewInt(1))
+	err = p.applicationService.AnalyzeTrade(block)
 
 	return err
 }
 
 func (p *PlatformWatcher) RunUntilNothingIsNotFound(height *big.Int) (*model.Block, error) {
 	for i := 0; i < 3; i++ {
-		block, err := p.Service.GetBlock(height)
+		block, err := p.service.GetBlock(height)
 		if err != nil {
 			logrus.Tracef("%s: Error fetching block %d: %v", p.platform.String(), height, err)
 			if service.IsNotFound(err) {
@@ -115,5 +115,5 @@ func (p *PlatformWatcher) Stop() {
 
 func (p *PlatformWatcher) Restart() {
 	logrus.Infof("%s: Restarting watcher ...", p.platform.String())
-	p.Number = big.NewInt(-1)
+	p.number = big.NewInt(-1)
 }
