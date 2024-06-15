@@ -10,7 +10,6 @@ import (
 )
 
 func NewPlatformWatcher(ctx *Ctx, platform model.Platform) (*PlatformWatcher, error) {
-	var listeners []service.BlockListener
 	var blockChainService service.BlockChainService
 	var err error
 	var transactionService application.AnalysisService
@@ -24,10 +23,10 @@ func NewPlatformWatcher(ctx *Ctx, platform model.Platform) (*PlatformWatcher, er
 
 	switch platform {
 	case model.PlatformEthereum:
-		blockChainService, err = NewEthereumBlockChainService(ctx, listeners)
+		blockChainService, err = NewEthereumBlockChainService(ctx, ctx.Listeners)
 		timeForBlockGenerated = 15
 	case model.PlatformTron:
-		blockChainService, err = NewTRONBlockChainService(ctx, listeners)
+		blockChainService, err = NewTRONBlockChainService(ctx, ctx.Listeners)
 		timeForBlockGenerated = 3
 	default:
 		blockChainService, err = nil, errors.New("platform not supported")
