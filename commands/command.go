@@ -13,7 +13,7 @@ import (
 )
 
 type MonitorCommandOptions struct {
-	listeners []service.BlockListener
+	Listeners []service.BlockListener
 }
 
 func NewMonitorCobraCommand(options MonitorCommandOptions) *cobra.Command {
@@ -53,7 +53,7 @@ func NewMonitorCobraCommand(options MonitorCommandOptions) *cobra.Command {
 
 			ctx := monitor2.Ctx{
 				Config:    cfg,
-				Listeners: options.listeners,
+				Listeners: options.Listeners,
 			}
 
 			monitor := NewMonitorCommand(&ctx)
@@ -94,7 +94,7 @@ func NewRootCommand() *cobra.Command {
 func RunCommand() {
 
 	RunCommandWithOptions(MonitorCommandOptions{
-		listeners: []service.BlockListener{},
+		Listeners: []service.BlockListener{},
 	})
 }
 
