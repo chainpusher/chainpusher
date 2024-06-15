@@ -1,30 +1,27 @@
 package postoffice
 
 import (
+	"github.com/chainpusher/blockchain/model"
 	"log"
 
-	"github.com/chainpusher/chainpusher/model"
 	"github.com/sirupsen/logrus"
 )
 
-type PostOfficeCoroutine struct {
+type Coroutine struct {
 	Transports []Transport
 }
 
-func NewPostOfficeCoroutine(transports []Transport) *PostOfficeCoroutine {
-	return &PostOfficeCoroutine{
+func NewPostOfficeCoroutine(transports []Transport) *Coroutine {
+	return &Coroutine{
 		Transports: transports,
 	}
 }
 
-func (p *PostOfficeCoroutine) GetTransports() []Transport {
+func (p *Coroutine) GetTransports() []Transport {
 	return p.Transports
 }
 
-func (p *PostOfficeCoroutine) Deliver(transactions []*model.Transaction) error {
-
-	logrus.Debug("Delivering transaction", transactions)
-
+func (p *Coroutine) Deliver(block *model.Block) error {
 	for _, transport := range p.GetTransports() {
 		go func(transport Transport) {
 
@@ -34,8 +31,8 @@ func (p *PostOfficeCoroutine) Deliver(transactions []*model.Transaction) error {
 				}
 			}()
 
-			if transport.Deliver(transactions) != nil {
-				log.Println("Failed to deliver transaction", transactions)
+			if transport.Deliver(block) != nil {
+				logrus.Errorf("Failed to deliver the block %d", block.Height)
 			}
 		}(transport)
 	}

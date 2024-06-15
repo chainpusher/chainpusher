@@ -6,15 +6,13 @@ import (
 	"path/filepath"
 )
 
-var KEY_PREFIX = "chainpusher"
+var KeyPrefix = "chainpusher"
 
 type Cache []byte
 
 func GetKey(key string) (Cache, error) {
-	filename := fmt.Sprintf("%s_%s.cached", KEY_PREFIX, key)
+	filename := fmt.Sprintf("%s_%s.cached", KeyPrefix, key)
 	path := filepath.Join(os.TempDir(), filename)
-
-	// log.Println("GetKey: ", path)
 
 	bytes, err := os.ReadFile(path)
 	if err != nil {
@@ -24,7 +22,7 @@ func GetKey(key string) (Cache, error) {
 }
 
 func SetKey(key string, value []byte) error {
-	filename := fmt.Sprintf("%s_%s.cached", KEY_PREFIX, key)
+	filename := fmt.Sprintf("%s_%s.cached", KeyPrefix, key)
 	path := filepath.Join(os.TempDir(), filename)
 	err := os.WriteFile(path, value, 0644)
 

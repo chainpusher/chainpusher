@@ -1,13 +1,13 @@
 package postoffice_test
 
 import (
+	"github.com/chainpusher/blockchain/model"
 	"math/big"
 	"os"
 	"path/filepath"
 	"testing"
 	"time"
 
-	"github.com/chainpusher/chainpusher/model"
 	"github.com/chainpusher/chainpusher/postoffice"
 	"github.com/chainpusher/chainpusher/sys"
 	"github.com/joho/godotenv"
@@ -36,23 +36,25 @@ func TestNewTransportTelegram(t *testing.T) {
 	anyTokens[0] = tokens[0]
 
 	tg := postoffice.NewTransportTelegram(anyTokens).(*postoffice.TransportTelegram)
-
-	tg.Deliver([]*model.Transaction{
-		{
-			Platform:       model.PlatformEthereum,
-			CryptoCurrency: model.Ethereum,
-			Payee:          "payee",
-			Payer:          "payer",
-			Amount:         *big.NewInt(100),
+	block := &model.Block{
+		Transactions: []*model.Transaction{
+			{
+				Platform:       model.PlatformEthereum,
+				CryptoCurrency: model.Ether,
+				Payee:          "payee",
+				Payer:          "payer",
+				Amount:         *big.NewInt(100),
+			},
+			{
+				Platform:       model.PlatformEthereum,
+				CryptoCurrency: model.Ether,
+				Payee:          "payee2",
+				Payer:          "payer2",
+				Amount:         *big.NewInt(200),
+			},
 		},
-		{
-			Platform:       model.PlatformEthereum,
-			CryptoCurrency: model.Ethereum,
-			Payee:          "payee2",
-			Payer:          "payer2",
-			Amount:         *big.NewInt(200),
-		},
-	})
+	}
+	tg.Deliver(block)
 
 	t.Log("Telegram transport created successfully: ", tg)
 	time.Sleep(5 * time.Second)
@@ -123,6 +125,7 @@ func TestNewTransportTelegramObjectChatIdEmpty(t *testing.T) {
 
 	if bot == nil {
 		t.Error("Expected bot")
+		return
 	}
 
 	if bot.WasUpdated == false {

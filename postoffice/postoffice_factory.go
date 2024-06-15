@@ -1,8 +1,8 @@
 package postoffice
 
-type PostOfficeFactory struct {
+type Factory struct {
 }
 
-func (p *PostOfficeFactory) CreatePostOffice() PostOffice {
-	return &PostOfficeCoroutine{}
+func (p *Factory) CreatePostOffice() PostOffice {
+	return &Coroutine{}
 }

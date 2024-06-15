@@ -1,17 +1,18 @@
 package config
 
 import (
-	"github.com/chainpusher/chainpusher/model"
+	"github.com/chainpusher/blockchain/model"
+	model2 "github.com/chainpusher/chainpusher/model"
 )
 
-type ConfigWatchlistRepository struct {
+type WatchlistRepository struct {
 	Wallets map[string]bool
 }
 
-func (cwr *ConfigWatchlistRepository) In(transactions []*model.Transaction) []*model.Transaction {
+func (cwr *WatchlistRepository) In(block *model.Block) []*model.Transaction {
 	watched := make([]*model.Transaction, 0)
 
-	for _, transaction := range transactions {
+	for _, transaction := range block.Transactions {
 		var exists bool
 
 		_, exists = cwr.Wallets[transaction.Payer]
@@ -26,11 +27,11 @@ func (cwr *ConfigWatchlistRepository) In(transactions []*model.Transaction) []*m
 	return watched
 }
 
-func NewConfigWatchlistRepository(wallets []string) model.WatchlistRepository {
-	var walletsMap map[string]bool = make(map[string]bool)
+func NewConfigWatchlistRepository(wallets []string) model2.WatchlistRepository {
+	var walletsMap = make(map[string]bool)
 
 	for _, wallet := range wallets {
 		walletsMap[wallet] = true
 	}
-	return &ConfigWatchlistRepository{Wallets: walletsMap}
+	return &WatchlistRepository{Wallets: walletsMap}
 }

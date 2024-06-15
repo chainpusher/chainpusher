@@ -1,18 +1,18 @@
 package postoffice
 
-import "github.com/chainpusher/chainpusher/model"
+import "github.com/chainpusher/blockchain/model"
 
-type PostOfficeAPIService struct {
+type APIService struct {
 }
 
-func (po *PostOfficeAPIService) Deliver(transactions []*model.Transaction) error {
+func (po *APIService) Deliver(block *model.Block) error {
 	panic("API service not implemented yet")
 }
 
-func (po *PostOfficeAPIService) GetTransports() []Transport {
+func (po *APIService) GetTransports() []Transport {
 	return []Transport{}
 }
 
-func NewPostOfficeAPIService() PostOffice {
-	return &PostOfficeAPIService{}
+func NewAPIService() PostOffice {
+	return &APIService{}
 }

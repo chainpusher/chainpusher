@@ -1,9 +1,9 @@
 package postoffice
 
-import "github.com/chainpusher/chainpusher/model"
+import "github.com/chainpusher/blockchain/model"
 
 type PostOffice interface {
-	Deliver(transactions []*model.Transaction) error
+	Deliver(block *model.Block) error
 
 	GetTransports() []Transport
 }

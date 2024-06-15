@@ -1,11 +1,11 @@
 package postoffice
 
-import "github.com/chainpusher/chainpusher/model"
+import "github.com/chainpusher/blockchain/model"
 
 type TransportRabbitMQ struct {
 }
 
-func (t *TransportRabbitMQ) Deliver(transactions []*model.Transaction) error {
+func (t *TransportRabbitMQ) Deliver(_ *model.Block) error {
 	panic("RabbitMQ not implemented yet")
 	return nil
 }

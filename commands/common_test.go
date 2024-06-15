@@ -32,7 +32,10 @@ func TestCommandParameter(t *testing.T) {
 
 	rootCmd.AddCommand(subCommand)
 	rootCmd.SetArgs([]string{"subcommand", "--logging"})
-	rootCmd.Execute()
+	err := rootCmd.Execute()
+	if err != nil {
+		return
+	}
 
 	if expectSubCommandExecuted != wasSubcommandExecute {
 		t.Errorf("Expected subcommand to be executed")

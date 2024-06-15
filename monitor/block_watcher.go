@@ -16,17 +16,17 @@ type BlockWatcher interface {
 	Start()
 }
 
-type BlcokLoggingWatcher struct {
+type BlockLoggingWatcher struct {
 	Descriptor *os.File
 
 	Channel chan interface{}
 }
 
-func (b *BlcokLoggingWatcher) Start() {
+func (b *BlockLoggingWatcher) Start() {
 	go b.Forever()
 }
 
-func (b *BlcokLoggingWatcher) Forever() {
+func (b *BlockLoggingWatcher) Forever() {
 	for {
 		select {
 		case block, ok := <-b.GetChannel():
@@ -40,7 +40,7 @@ func (b *BlcokLoggingWatcher) Forever() {
 	}
 }
 
-func (b *BlcokLoggingWatcher) WriteBlock(block interface{}) {
+func (b *BlockLoggingWatcher) WriteBlock(block interface{}) {
 	serialized, err := json.Marshal(block)
 	if err != nil {
 		logrus.Errorf("Error marshalling block: %v", err)
@@ -56,14 +56,23 @@ func (b *BlcokLoggingWatcher) WriteBlock(block interface{}) {
 		return
 	}
 
-	b.Descriptor.Write(NewLineByte)
+	write, err := b.Descriptor.Write(NewLineByte)
+	if err != nil {
+		logrus.Errorf("Error writing newline: %v", err)
+		return
+	}
+
+	logrus.Debugf("Write %d bytes to file", write)
 }
 
-func (b *BlcokLoggingWatcher) Close() {
-	b.Descriptor.Close()
+func (b *BlockLoggingWatcher) Close() {
+	err := b.Descriptor.Close()
+	if err != nil {
+		logrus.Errorf("Error closing file: %v", err)
+	}
 }
 
-func (b *BlcokLoggingWatcher) GetChannel() chan interface{} {
+func (b *BlockLoggingWatcher) GetChannel() chan interface{} {
 	return b.Channel
 }
 
@@ -90,7 +99,7 @@ func NewBlockLoggingWatcher(channel chan interface{}, rawFilePath string) BlockW
 		logrus.Errorf("Error opening file: %v", err)
 	}
 
-	return &BlcokLoggingWatcher{
+	return &BlockLoggingWatcher{
 		Descriptor: fd,
 		Channel:    channel,
 	}

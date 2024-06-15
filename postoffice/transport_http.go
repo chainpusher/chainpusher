@@ -3,12 +3,12 @@ package postoffice
 import (
 	"bytes"
 	"encoding/json"
+	"github.com/chainpusher/blockchain/model"
 	"io"
 	"math/big"
 	"net/http"
 	"time"
 
-	"github.com/chainpusher/chainpusher/model"
 	"github.com/sirupsen/logrus"
 )
 
@@ -45,9 +45,9 @@ type TransportHttp struct {
 	Urls []string
 }
 
-func (po *TransportHttp) Deliver(transactions []*model.Transaction) error {
+func (po *TransportHttp) Deliver(block *model.Block) error {
 	commands := make([]*TransactionCommand, 0)
-	for _, transaction := range transactions {
+	for _, transaction := range block.Transactions {
 		commands = append(commands, ToTransactionCommand(transaction))
 	}
 
@@ -57,8 +57,6 @@ func (po *TransportHttp) Deliver(transactions []*model.Transaction) error {
 
 	payloadBytes, err := json.Marshal(payload)
 	if err != nil {
-		logrus.Warnf("Failed to marshal payload: %v", err)
-		logrus.Debugf("%v", payload)
 		return err
 	}
 
@@ -68,7 +66,7 @@ func (po *TransportHttp) Deliver(transactions []*model.Transaction) error {
 			body := bytes.NewReader(payloadBytes)
 			req, err := http.NewRequest("POST", url, body)
 			if err != nil {
-				logrus.Warnf("Failed to create request: %v", err)
+				// TODO: unhandled error
 				return
 			}
 			req.Header.Set("Content-Type", "application/json")
@@ -77,23 +75,16 @@ func (po *TransportHttp) Deliver(transactions []*model.Transaction) error {
 
 			response, err := client.Do(req)
 			if err != nil {
-				logrus.Warnf("Failed to deliver message: %v", err)
+				// TODO: unhandled error
 				return
 			}
 
-			if response.StatusCode != http.StatusOK {
-				logrus.Warnf("Failed to deliver message: %v", response.Status)
-			}
-
-			defer response.Body.Close()
-
-			bodyBytes, err := io.ReadAll(response.Body)
-			if err != nil {
-				logrus.Warnf("Failed to read response body: %v", err)
-			}
-			logrus.Debug(string(bodyBytes))
-
-			logrus.Infof("Delivered message to %s", url)
+			defer func(Body io.ReadCloser) {
+				err := Body.Close()
+				if err != nil {
+					logrus.Warnf("Failed to close response body: %v", err)
+				}
+			}(response.Body)
 		}(url, payloadBytes)
 	}
 

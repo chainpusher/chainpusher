@@ -1,11 +1,11 @@
 package postoffice
 
-import "github.com/chainpusher/chainpusher/model"
+import "github.com/chainpusher/blockchain/model"
 
 type TransportFunctionCall struct {
 }
 
-func (t *TransportFunctionCall) Deliver(transactions []*model.Transaction) error {
+func (t *TransportFunctionCall) Deliver(_ *model.Block) error {
 	return nil
 }
 

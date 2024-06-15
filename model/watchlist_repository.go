@@ -1,5 +1,7 @@
 package model
 
+import "github.com/chainpusher/blockchain/model"
+
 type WatchlistRepository interface {
-	In(address []*Transaction) []*Transaction
+	In(block *model.Block) []*model.Transaction
 }

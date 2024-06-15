@@ -1,11 +1,11 @@
 package postoffice
 
-import "github.com/chainpusher/chainpusher/model"
+import "github.com/chainpusher/blockchain/model"
 
 type TransportKafka struct {
 }
 
-func (t *TransportKafka) Deliver(transactions []*model.Transaction) error {
+func (t *TransportKafka) Deliver(_ *model.Block) error {
 	return nil
 }
 

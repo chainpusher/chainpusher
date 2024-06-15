@@ -1,38 +1,68 @@
 package commands
 
 import (
-	"log"
+	"sync"
 
+	"github.com/chainpusher/blockchain/model"
+	"github.com/chainpusher/blockchain/service"
 	"github.com/chainpusher/chainpusher/config"
 	"github.com/chainpusher/chainpusher/monitor"
-	"github.com/fbsobreira/gotron-sdk/pkg/client"
 	"github.com/sirupsen/logrus"
-	"google.golang.org/grpc"
 )
 
 type MonitorCommand struct {
-	Client  *client.GrpcClient
-	Monitor monitor.Monitor
+	ctx *monitor.Ctx
 
-	monitors []monitor.PlatformWatcher
+	watchers []*monitor.PlatformWatcher
 }
 
 func (m *MonitorCommand) Execute() error {
-
-	m.Monitor.Start()
+	logrus.Trace("Executing monitor command")
+	m.Start()
 
 	return nil
 }
 
-func NewMonitorCommand(c *config.Config) *MonitorCommand {
-	client := client.NewGrpcClient("")
-	err := client.Start(grpc.WithInsecure())
+func (m *MonitorCommand) AddWatcher(watcher *monitor.PlatformWatcher) {
+	m.watchers = append(m.watchers, watcher)
+}
 
+func (m *MonitorCommand) StartPlatformWithWaitGroup(platform model.Platform, wg *sync.WaitGroup) {
+	watcher, err := monitor.NewPlatformWatcher(m.ctx, platform)
 	if err != nil {
-		log.Panic(err)
-		panic(err)
+		logrus.Errorf("Error creating watcher for platform %s: %v", platform, err)
+		wg.Done()
+		return
+	}
+	m.AddWatcher(watcher)
+
+	go func(watcher *monitor.PlatformWatcher, wg *sync.WaitGroup) {
+		logrus.Tracef("Starting watcher for platform %s", platform)
+		watcher.Start()
+		wg.Done()
+	}(watcher, wg)
+
+}
+
+func (m *MonitorCommand) Start() {
+	logrus.Tracef("Starting monitor command")
+	var wg sync.WaitGroup
+
+	platforms := service.GetAllPlatform()
+	for _, platform := range platforms {
+		wg.Add(1)
+
+		m.StartPlatformWithWaitGroup(platform, &wg)
 	}
 
+	wg.Wait()
+}
+
+func (m *MonitorCommand) Stop() {
+
+}
+
+func NewMonitorCommand(c *config.Config) *MonitorCommand {
 	channel := make(chan interface{}, 10000)
 
 	w := monitor.NewBlockLoggingWatcher(channel, c.BlockLoggingFile)
@@ -46,12 +76,9 @@ func NewMonitorCommand(c *config.Config) *MonitorCommand {
 		Channel: channel,
 	}
 
-	pff := monitor.NewPlatformWatcherDefaultFactory(ctx)
-	m := monitor.NewDefaultMonitor(pff)
-
 	return &MonitorCommand{
-		Client:  client,
-		Monitor: m,
+		ctx:      ctx,
+		watchers: []*monitor.PlatformWatcher{},
 	}
 
 }

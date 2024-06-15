@@ -2,6 +2,7 @@ package commands
 
 import (
 	"fmt"
+	"github.com/sirupsen/logrus"
 	"log"
 	"os"
 
@@ -30,8 +31,8 @@ func NewMonitorCobraCommand() *cobra.Command {
 			} else {
 				cfg, err = config.ParseConfigFromYaml(p)
 				if err != nil {
-					log.Fatalf("failed to parse config: %v", err)
 					cfg = &config.Config{}
+					logrus.Errorf("failed to parse config: %v", err)
 				}
 			}
 
@@ -45,7 +46,10 @@ func NewMonitorCobraCommand() *cobra.Command {
 			SetupLogger(cfg)
 
 			monitor := NewMonitorCommand(cfg)
-			monitor.Execute()
+			err = monitor.Execute()
+			if err != nil {
+				return
+			}
 		},
 	}
 

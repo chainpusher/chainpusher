@@ -1,10 +1,10 @@
 package config_test
 
 import (
+	"github.com/chainpusher/blockchain/model"
 	"testing"
 
 	"github.com/chainpusher/chainpusher/config"
-	"github.com/chainpusher/chainpusher/model"
 )
 
 func TestIsOnList(t *testing.T) {
@@ -16,7 +16,7 @@ func TestIsOnList(t *testing.T) {
 		{Payee: "wallet3"},
 	}
 
-	watched := r.In(transactions)
+	watched := r.In(&model.Block{Transactions: transactions})
 	if len(watched) != 2 {
 		t.Error("watched is incorrected", watched)
 	}

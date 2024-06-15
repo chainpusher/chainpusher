@@ -2,16 +2,12 @@ package postoffice
 
 import (
 	"github.com/chainpusher/chainpusher/config"
-	"github.com/sirupsen/logrus"
 )
 
 func NewTransportTelegramFromConfig(cfg *config.Config) Transport {
 	if cfg.Telegram.Tokens == nil {
 		return nil
 	}
-	logrus.Info("Creating Telegram transport")
-
-	defer logrus.Info("Telegram transport created")
 	return NewTransportTelegram(cfg.Telegram.Tokens)
 }
 
@@ -19,14 +15,12 @@ func NewTransportHttpFromConfig(cfg *config.Config) Transport {
 	if cfg.Http == nil {
 		return nil
 	}
-	logrus.Info("Creating HTTP transport")
 
 	urls := make([]string, 0)
 	for _, http := range cfg.Http {
 		urls = append(urls, http.Url)
 	}
 
-	defer logrus.Info("HTTP transport created")
 	return NewTransportHttp(urls)
 }
 

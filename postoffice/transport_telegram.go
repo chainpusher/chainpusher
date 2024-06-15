@@ -1,11 +1,11 @@
 package postoffice
 
 import (
+	"github.com/chainpusher/blockchain/model"
 	"net/http"
 	"strings"
 	"sync"
 
-	"github.com/chainpusher/chainpusher/model"
 	"github.com/chainpusher/chainpusher/sys"
 	"github.com/ethereum/go-ethereum/log"
 	tgbotapi "github.com/go-telegram-bot-api/telegram-bot-api/v5"
@@ -152,9 +152,8 @@ func NewTransportTelegram(tokens []interface{}) Transport {
 	return transportTelegram
 }
 
-func (t *TransportTelegram) Deliver(transactions []*model.Transaction) error {
-	logrus.Debugf("Deliver %d transactions to telegram message", len(transactions))
-
+func (t *TransportTelegram) Deliver(block *model.Block) error {
+	transactions := block.Transactions
 	messages := make([]string, 0)
 	for _, transaction := range transactions {
 		messages = append(messages, transaction.SocialMediaMessage())
