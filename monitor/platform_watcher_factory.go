@@ -36,6 +36,11 @@ func NewPlatformWatcher(ctx *Ctx, platform model.Platform) (*PlatformWatcher, er
 		return nil, err
 	}
 
+	movement := ctx.Movement
+	if nil == movement {
+		movement = &DefaultMovement{}
+	}
+
 	return &PlatformWatcher{
 		config:                ctx.Config,
 		done:                  make(chan bool),
@@ -46,6 +51,7 @@ func NewPlatformWatcher(ctx *Ctx, platform model.Platform) (*PlatformWatcher, er
 		isRestart:             false,
 		timeForBlockGenerated: timeForBlockGenerated,
 		platform:              platform,
+		movement:              movement,
 	}, nil
 }
 

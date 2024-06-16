@@ -11,4 +11,6 @@ type Ctx struct {
 	Channel chan interface{}
 
 	Listeners []service.BlockListener
+
+	Movement Movement
 }

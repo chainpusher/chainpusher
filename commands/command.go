@@ -14,6 +14,8 @@ import (
 
 type MonitorCommandOptions struct {
 	Listeners []service.BlockListener
+
+	Movement monitor2.Movement
 }
 
 func NewMonitorCobraCommand(options MonitorCommandOptions) *cobra.Command {
@@ -55,6 +57,8 @@ func NewMonitorCobraCommand(options MonitorCommandOptions) *cobra.Command {
 				Config:    cfg,
 				Listeners: options.Listeners,
 			}
+
+			ctx.Movement = options.Movement
 
 			monitor := NewMonitorCommand(&ctx)
 			err = monitor.Execute()

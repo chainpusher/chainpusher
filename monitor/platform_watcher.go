@@ -22,6 +22,7 @@ type PlatformWatcher struct {
 	isRestart             bool
 	timeForBlockGenerated time.Duration
 	platform              model.Platform
+	movement              Movement
 }
 
 func (p *PlatformWatcher) Start() {
@@ -103,7 +104,7 @@ func (p *PlatformWatcher) WatchBlocks() {
 				return
 			}
 
-			time.Sleep(p.timeForBlockGenerated * time.Second)
+			p.movement.WaitTheNextBlockToBeGenerated(p)
 		}
 
 	}
@@ -116,4 +117,8 @@ func (p *PlatformWatcher) Stop() {
 func (p *PlatformWatcher) Restart() {
 	logrus.Infof("%s: Restarting watcher ...", p.platform.String())
 	p.number = big.NewInt(-1)
+}
+
+func (p *PlatformWatcher) GetTimeForBlockGenerated() time.Duration {
+	return p.timeForBlockGenerated
 }
