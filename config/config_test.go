@@ -1,6 +1,7 @@
 package config_test
 
 import (
+	"github.com/stretchr/testify/assert"
 	"testing"
 
 	"github.com/chainpusher/chainpusher/config"
@@ -108,4 +109,26 @@ func TestTelegramTokenIsObjectChatIdEmpty(t *testing.T) {
 	if _, ok := token["chat_id"]; ok {
 		t.Error("Expected chat_id to be empty")
 	}
+}
+
+func TestConfig_KafkaIsValidated(t *testing.T) {
+	var text string = `kafka:
+  block_topic: block
+  raw_block_topic: raw_block
+  servers:
+    - address: localhost
+      port: 9092`
+	cfg, err := config.ParseConfigFromYamlText(text)
+	assert.Nil(t, err, "Error parsing config")
+	assert.True(t, cfg.GetKafka().IsValidated(), "Expected Kafka config to be validated")
+}
+
+func TestConfig_KafkaIsInvalidated(t *testing.T) {
+	var text string = `kafka:
+  block_topic: block
+  raw_block_topic: raw_block
+  servers: []`
+	cfg, err := config.ParseConfigFromYamlText(text)
+	assert.Nil(t, err, "Error parsing config")
+	assert.False(t, cfg.GetKafka().IsValidated(), "Expected Kafka config to be invalidated")
 }

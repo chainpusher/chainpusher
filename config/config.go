@@ -16,6 +16,32 @@ type HttpConfig struct {
 	EncryptionKey string `json:"encryption_key"`
 }
 
+type KafkaConfig struct {
+	// The block will serialize the message into the topic
+	BlockTopic string `yaml:"block_topic"`
+
+	RawBlockTopic string `yaml:"raw_block_topic"`
+
+	Servers []struct {
+		Address string `yaml:"address"`
+		Port    int    `yaml:"port"`
+	} `yaml:"servers"`
+}
+
+func (k *KafkaConfig) IsValidated() bool {
+	if len(k.BlockTopic) == 0 {
+		return false
+	}
+
+	if len(k.RawBlockTopic) == 0 {
+		return false
+	}
+	if len(k.Servers) == 0 {
+		return false
+	}
+	return true
+}
+
 type Config struct {
 	Logger struct {
 		Level string `json:"level"`
@@ -34,17 +60,12 @@ type Config struct {
 
 	IsTesting bool
 
-	Kafka struct {
-		// The block will serialize the message into the topic
-		BlockTopic string `yaml:"block_topic"`
+	Kafka KafkaConfig `yaml:"kafka"`
+}
 
-		RawBlockTopic string `yaml:"raw_block_topic"`
+func (c *Config) GetKafka() *KafkaConfig {
 
-		Servers []struct {
-			Address string `yaml:"address"`
-			Port    int    `yaml:"port"`
-		} `yaml:"servers"`
-	} `yaml:"kafka"`
+	return &c.Kafka
 }
 
 func ParseConfigFromYamlText(text string) (*Config, error) {
