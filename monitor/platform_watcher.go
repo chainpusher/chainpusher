@@ -41,7 +41,7 @@ func (p *PlatformWatcher) Start() {
 	p.WatchBlocks()
 }
 
-func (p *PlatformWatcher) FetchBlocks() error {
+func (p *PlatformWatcher) FetchBlocks() (*model.Block, error) {
 	logrus.Debugf("%s: Fetching block %d.", p.platform.String(), p.number)
 
 	var block *model.Block
@@ -55,7 +55,7 @@ func (p *PlatformWatcher) FetchBlocks() error {
 	}
 
 	if err != nil {
-		return err
+		return block, err
 	}
 
 	logrus.Debugf("%s: Block %d fetched (at %v) with %d transactions", p.platform.String(),
@@ -64,7 +64,7 @@ func (p *PlatformWatcher) FetchBlocks() error {
 	p.number = block.Height.Add(block.Height, big.NewInt(1))
 	err = p.applicationService.AnalyzeTrade(block)
 
-	return err
+	return block, err
 }
 
 func (p *PlatformWatcher) RunUntilNothingIsNotFound(height *big.Int) (*model.Block, error) {
@@ -92,7 +92,10 @@ func (p *PlatformWatcher) WatchBlocks() {
 		case <-p.done:
 			return
 		default:
-			err := p.FetchBlocks()
+			p.movement.BeforeQueryingBlock()
+			block, err := p.FetchBlocks()
+
+			p.movement.AfterQueryingBlock(block)
 			if err != nil {
 				logrus.Errorf("%s: Error fetching block: %v", p.platform.String(), err)
 
@@ -104,7 +107,7 @@ func (p *PlatformWatcher) WatchBlocks() {
 				return
 			}
 
-			p.movement.WaitTheNextBlockToBeGenerated(p)
+			p.movement.WaitTheNextBlockToBeGenerated(p, block)
 		}
 
 	}
