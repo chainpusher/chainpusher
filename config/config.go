@@ -33,6 +33,18 @@ type Config struct {
 	TransactionLoggingFile string `yaml:"transaction_file"`
 
 	IsTesting bool
+
+	Kafka struct {
+		// The block will serialize the message into the topic
+		BlockTopic string `yaml:"block_topic"`
+
+		RawBlockTopic string `yaml:"raw_block_topic"`
+
+		Servers []struct {
+			Address string `yaml:"address"`
+			Port    int    `yaml:"port"`
+		} `yaml:"servers"`
+	} `yaml:"kafka"`
 }
 
 func ParseConfigFromYamlText(text string) (*Config, error) {

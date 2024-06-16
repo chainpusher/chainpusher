@@ -5,7 +5,6 @@ import (
 	"github.com/chainpusher/blockchain/service"
 	monitor2 "github.com/chainpusher/chainpusher/monitor"
 	"github.com/sirupsen/logrus"
-	"log"
 	"os"
 
 	"github.com/chainpusher/chainpusher/config"
@@ -13,9 +12,13 @@ import (
 )
 
 type MonitorCommandOptions struct {
+
+	// These
 	Listeners []service.BlockListener
 
 	Movement monitor2.Movement
+
+	Listener Listener
 }
 
 func NewMonitorCobraCommand(options MonitorCommandOptions) *cobra.Command {
@@ -28,7 +31,7 @@ func NewMonitorCobraCommand(options MonitorCommandOptions) *cobra.Command {
 
 			defer func() {
 				if r := recover(); r != nil {
-					log.Println("Recovered in f", r)
+					logrus.Error("Recovered in f", r)
 				}
 			}()
 
@@ -59,6 +62,10 @@ func NewMonitorCobraCommand(options MonitorCommandOptions) *cobra.Command {
 			}
 
 			ctx.Movement = options.Movement
+
+			if options.Listener != nil {
+				options.Listener.ConfigLoaded(&ctx)
+			}
 
 			monitor := NewMonitorCommand(&ctx)
 			err = monitor.Execute()
