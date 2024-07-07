@@ -3,8 +3,7 @@ package application
 import (
 	"github.com/chainpusher/blockchain/model"
 	"github.com/chainpusher/chainpusher/config"
-	model2 "github.com/chainpusher/chainpusher/model"
-
+	model2 "github.com/chainpusher/chainpusher/domain/model"
 	"github.com/chainpusher/chainpusher/postoffice"
 	"github.com/sirupsen/logrus"
 )

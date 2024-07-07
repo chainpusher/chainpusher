@@ -2,7 +2,7 @@ package config
 
 import (
 	"github.com/chainpusher/blockchain/model"
-	model2 "github.com/chainpusher/chainpusher/model"
+	model2 "github.com/chainpusher/chainpusher/domain/model"
 )
 
 type WatchlistRepository struct {
