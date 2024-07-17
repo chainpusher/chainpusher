@@ -5,6 +5,8 @@ import (
 	"github.com/chainpusher/chainpusher/interfaces/facade/dto"
 )
 
-type TransactionServiceFacade interface {
+type TinyBlockServiceFacade interface {
 	GetTransactions(command *dto.QueryTransactionsCommand) ([]*model.Transaction, error)
+
+	Subscribe(client int)
 }

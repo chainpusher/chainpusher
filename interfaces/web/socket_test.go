@@ -36,3 +36,52 @@ func TestSocket_Emit(t *testing.T) {
 
 	<-done
 }
+
+func TestSocket_FunctionCall(t *testing.T) {
+	done := make(chan *dto.JsonRpcResponseDto)
+
+	processor := web.NewCallbackMessageProcessor(func(client *web.Client, message []byte) {
+		rsp := dto.JsonRpcResponseDto{
+			Call: &dto.JsonRpcDto{
+				Method: "ping",
+			},
+			Result: nil,
+		}
+		err := client.Emit(rsp)
+		assert.Nil(t, err)
+	})
+
+	go func() {
+		server := web.NewServerTask("localhost", 8080, processor)
+		_ = server.Start()
+	}()
+
+	c, _, err := websocket.DefaultDialer.Dial("ws://localhost:8080/ws", nil)
+	assert.Nil(t, err)
+	defer func(c *websocket.Conn) {
+		err := c.Close()
+		assert.Nil(t, err)
+	}(c)
+
+	go func() {
+		var response *dto.JsonRpcResponseDto
+		_, bytes, err := c.ReadMessage()
+
+		assert.Nil(t, err)
+		err = json.Unmarshal(bytes, &response)
+		assert.Nil(t, err)
+
+		done <- response
+	}()
+
+	_ = c.WriteJSON(&dto.JsonRpcDto{Method: "subscribe"})
+
+	select {
+	case rsp := <-done:
+		assert.Equal(t, rsp.Call.Method, "ping")
+		assert.Nil(t, rsp.Result)
+		close(done)
+		return
+	}
+
+}
