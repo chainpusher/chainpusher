@@ -31,9 +31,19 @@ func (s *ServerTask) Running() bool {
 	return s.server != nil
 }
 
-func NewServerTask(host string, port int) *ServerTask {
+func NewServerTask(host string, port int, processor MessageProcessor) *ServerTask {
 	addr := fmt.Sprintf("%s:%d", host, port)
-	server := &http.Server{Addr: addr}
+
+	clients := NewClients()
+	socketHandler := &SocketHandler{clients, processor}
+	mux := http.NewServeMux()
+	mux.HandleFunc("/ws", socketHandler.Handle)
+
+	server := &http.Server{
+		Addr:    addr,
+		Handler: mux,
+	}
+
 	return &ServerTask{
 		server: server,
 	}

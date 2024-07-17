@@ -1,11 +1,30 @@
 package web
 
-import "github.com/gorilla/websocket"
+import (
+	"github.com/gorilla/websocket"
+	"net/http"
+)
+
+var upgrader = websocket.Upgrader{
+	ReadBufferSize:  1024,
+	WriteBufferSize: 1024,
+}
 
 var clients *Clients = NewClients()
 
 type Clients struct {
 	connections *map[*websocket.Conn]*ClientContext
+
+	room *Room
+}
+
+func (c *Clients) Upgrade(w http.ResponseWriter, r *http.Request) (*Client, error) {
+	conn, err := upgrader.Upgrade(w, r, nil)
+	if err != nil {
+		return nil, err
+	}
+
+	return NewClient(conn), err
 }
 
 func (c *Clients) Add(conn *websocket.Conn) *ClientContext {
@@ -34,6 +53,11 @@ func (c *Clients) SendAll(message interface{}) error {
 	}
 
 	return nil
+}
+
+func (c *Clients) Close(client *Client) error {
+	err := client.connection.Close()
+	return err
 }
 
 func NewClients() *Clients {
