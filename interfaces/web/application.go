@@ -12,7 +12,6 @@ func RunApplication() {
 	NewWSTradingListener(clients)
 
 	http.HandleFunc("/", GetTransactionHandler)
-	http.HandleFunc("/ws", WSHandler)
 
 	srv := &http.Server{
 		Addr:    ":8080",

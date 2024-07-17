@@ -1,20 +1,38 @@
 package web_test
 
 import (
+	"encoding/json"
+	"github.com/chainpusher/chainpusher/interfaces/facade/dto"
 	"github.com/chainpusher/chainpusher/interfaces/web"
+	"github.com/gorilla/websocket"
+	"github.com/stretchr/testify/assert"
 	"testing"
-	"time"
 )
 
 func TestSocket_Emit(t *testing.T) {
-	processor := web.NewCallbackMessageProcessor(func(client *web.Client, message []byte) {
+	done := make(chan struct{})
 
+	processor := web.NewCallbackMessageProcessor(func(client *web.Client, message []byte) {
+		var rpc *dto.JsonRpcDto
+		_ = json.Unmarshal(message, &rpc)
+
+		assert.Equal(t, "subscribe", rpc.Method)
+		close(done)
 	})
 
 	go func() {
 		server := web.NewServerTask("localhost", 8080, processor)
-		server.Start()
+		_ = server.Start()
 	}()
 
-	time.Sleep(100 * time.Millisecond)
+	c, _, err := websocket.DefaultDialer.Dial("ws://localhost:8080/ws", nil)
+	assert.Nil(t, err)
+	defer func(c *websocket.Conn) {
+		err := c.Close()
+		assert.Nil(t, err)
+	}(c)
+
+	_ = c.WriteJSON(&dto.JsonRpcDto{Method: "subscribe"})
+
+	<-done
 }

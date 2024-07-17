@@ -9,7 +9,11 @@ import (
 )
 
 func TestServer_Start(t *testing.T) {
-	server := web.NewServerTask("127.0.0.1", 8080)
+
+	processor := web.NewCallbackMessageProcessor(func(client *web.Client, message []byte) {
+
+	})
+	server := web.NewServerTask("127.0.0.1", 8080, processor)
 
 	go func() {
 		_ = server.Start()
