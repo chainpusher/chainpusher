@@ -8,5 +8,5 @@ import (
 type TinyBlockServiceFacade interface {
 	GetTransactions(command *dto.QueryTransactionsCommand) ([]*model.Transaction, error)
 
-	Subscribe(client int)
+	Subscribe(clientId int64)
 }

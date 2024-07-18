@@ -1,8 +1,11 @@
-package web
+package socket
 
-import "sync"
+import (
+	"sync"
+)
 
 type Room struct {
+	name    string
 	clients []*Client
 	mutex   sync.Mutex
 }
@@ -29,5 +32,11 @@ func (g *Room) Leave(client *Client) {
 func (g *Room) Emit(message interface{}) {
 	for _, c := range g.clients {
 		c.Emit(message)
+	}
+}
+
+func NewRoom(name string) *Room {
+	return &Room{
+		name: name,
 	}
 }

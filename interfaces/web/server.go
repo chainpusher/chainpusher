@@ -3,6 +3,7 @@ package web
 import (
 	"context"
 	"fmt"
+	"github.com/chainpusher/chainpusher/interfaces/web/socket"
 	"net/http"
 	"time"
 )
@@ -31,10 +32,9 @@ func (s *ServerTask) Running() bool {
 	return s.server != nil
 }
 
-func NewServerTask(host string, port int, processor MessageProcessor) *ServerTask {
+func NewServerTask(host string, port int, processor MessageProcessor, clients *socket.Clients) *ServerTask {
 	addr := fmt.Sprintf("%s:%d", host, port)
 
-	clients := NewClients()
 	socketHandler := &SocketHandler{clients, processor}
 	mux := http.NewServeMux()
 	mux.HandleFunc("/ws", socketHandler.Handle)

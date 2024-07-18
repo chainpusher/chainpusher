@@ -1,15 +1,18 @@
 package web
 
-import "github.com/chainpusher/blockchain/model"
+import (
+	"github.com/chainpusher/blockchain/model"
+	"github.com/chainpusher/chainpusher/interfaces/web/socket"
+)
 
 type WSTradingListener struct {
-	clients *Clients
+	clients *socket.Clients
 }
 
 func (listener *WSTradingListener) BlockGenerated(block *model.Block) {
-	listener.clients.SendAll(block)
+	//listener.clients.SendAll(block)
 }
 
-func NewWSTradingListener(clients *Clients) *WSTradingListener {
+func NewWSTradingListener(clients *socket.Clients) *WSTradingListener {
 	return &WSTradingListener{clients}
 }
