@@ -13,13 +13,8 @@ type MonitorCommand struct {
 	ctx *monitor.Ctx
 
 	watchers []*monitor.PlatformWatcher
-}
 
-func (m *MonitorCommand) Execute() error {
-	logrus.Trace("Executing monitor command")
-	m.Start()
-
-	return nil
+	running bool
 }
 
 func (m *MonitorCommand) AddWatcher(watcher *monitor.PlatformWatcher) {
@@ -43,7 +38,7 @@ func (m *MonitorCommand) StartPlatformWithWaitGroup(platform model.Platform, wg 
 
 }
 
-func (m *MonitorCommand) Start() {
+func (m *MonitorCommand) Start() error {
 	logrus.Tracef("Starting monitor command")
 	var wg sync.WaitGroup
 
@@ -54,11 +49,19 @@ func (m *MonitorCommand) Start() {
 		m.StartPlatformWithWaitGroup(platform, &wg)
 	}
 
+	m.running = true
+
 	wg.Wait()
+
+	return nil
 }
 
-func (m *MonitorCommand) Stop() {
+func (m *MonitorCommand) Stop() error {
+	return nil
+}
 
+func (m *MonitorCommand) Running() bool {
+	return m.running
 }
 
 func NewMonitorCommand(ctx *monitor.Ctx) *MonitorCommand {

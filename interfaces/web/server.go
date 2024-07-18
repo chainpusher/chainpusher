@@ -4,6 +4,7 @@ import (
 	"context"
 	"fmt"
 	"github.com/chainpusher/chainpusher/interfaces/web/socket"
+	"github.com/sirupsen/logrus"
 	"net/http"
 	"time"
 )
@@ -13,6 +14,7 @@ type ServerTask struct {
 }
 
 func (s *ServerTask) Start() error {
+	logrus.Debugf("Starting server at %s", s.server.Addr)
 	if err := s.server.ListenAndServe(); err != nil {
 		return err
 	}
@@ -25,6 +27,8 @@ func (s *ServerTask) Stop() error {
 
 	err := s.server.Shutdown(ctx)
 	s.server = nil
+
+	logrus.Debugf("Stopped server at %s", s.server.Addr)
 	return err
 }
 
