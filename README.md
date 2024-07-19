@@ -273,4 +273,4 @@ Thank you for contributing!
 
 This project is licensed under the MIT License. You are free to use, modify, and distribute this software in compliance with the terms of the MIT License.
 
-For the full license text, see the [LICENSE](./LICENSE) file in the repository.
+For the full license text, see the [LICENSE](./LICENSE.txt) file in the repository.

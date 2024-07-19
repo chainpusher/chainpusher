@@ -36,7 +36,7 @@ func (s *ServerTask) Running() bool {
 	return s.server != nil
 }
 
-func NewServerTask(host string, port int, processor MessageProcessor, clients *socket.Clients) *ServerTask {
+func NewServerTask(host string, port int, processor MessageProcessor, clients socket.Clients) *ServerTask {
 	addr := fmt.Sprintf("%s:%d", host, port)
 
 	socketHandler := &SocketHandler{clients, processor}

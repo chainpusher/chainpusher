@@ -15,7 +15,7 @@ import (
 func TestSocket_Emit(t *testing.T) {
 	done := make(chan struct{})
 
-	processor := web.NewCallbackMessageProcessor(func(client *socket.Client, message []byte) {
+	processor := web.NewCallbackMessageProcessor(func(client socket.Client, message []byte) {
 		var rpc *dto.JsonRpcDto
 		_ = json.Unmarshal(message, &rpc)
 
@@ -43,7 +43,7 @@ func TestSocket_Emit(t *testing.T) {
 func TestSocket_FunctionCall(t *testing.T) {
 	done := make(chan *dto.JsonRpcResponseDto)
 
-	processor := web.NewCallbackMessageProcessor(func(client *socket.Client, message []byte) {
+	processor := web.NewCallbackMessageProcessor(func(client socket.Client, message []byte) {
 		rsp := dto.JsonRpcResponseDto{
 			Call: &dto.JsonRpcDto{
 				Method: "ping",

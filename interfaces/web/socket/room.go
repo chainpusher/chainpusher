@@ -6,33 +6,37 @@ import (
 
 type Room struct {
 	name    string
-	clients []*Client
+	clients []Client
 	mutex   sync.Mutex
 }
 
-func (g *Room) Join(client *Client) {
-	g.mutex.Lock()
-	defer g.mutex.Unlock()
+func (r *Room) Join(client Client) {
+	r.mutex.Lock()
+	defer r.mutex.Unlock()
 
-	g.clients = append(g.clients, client)
+	r.clients = append(r.clients, client)
 }
 
-func (g *Room) Leave(client *Client) {
-	g.mutex.Lock()
-	defer g.mutex.Unlock()
+func (r *Room) Leave(client *ClientImpl) {
+	r.mutex.Lock()
+	defer r.mutex.Unlock()
 
-	for i, c := range g.clients {
+	for i, c := range r.clients {
 		if c == client {
-			g.clients = append(g.clients[:i], g.clients[i+1:]...)
+			r.clients = append(r.clients[:i], r.clients[i+1:]...)
 			break
 		}
 	}
 }
 
-func (g *Room) Emit(message interface{}) {
-	for _, c := range g.clients {
-		c.Emit(message)
+func (r *Room) Emit(message interface{}) {
+	for _, c := range r.clients {
+		_ = c.Emit(message)
 	}
+}
+
+func (r *Room) GetClients() []Client {
+	return r.clients
 }
 
 func NewRoom(name string) *Room {

@@ -9,6 +9,6 @@ func (t *TransportKafka) Deliver(_ *model.Block) error {
 	return nil
 }
 
-func NewTransportKafka() Transport {
-	return &TransportKafka{}
-}
+//func NewTransportKafka() Transport {
+//	return &TransportKafka{}
+//}

@@ -9,6 +9,6 @@ func (po *TransportEmail) Deliver(_ *model.Block) error {
 	return nil
 }
 
-func NewTransportEmail() Transport {
-	return &TransportEmail{}
-}
+//func NewTransportEmail() Transport {
+//	return &TransportEmail{}
+//}

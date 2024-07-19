@@ -32,7 +32,7 @@ type MonitorCommandOptions struct {
 type CommandRunner struct {
 	ctx *monitor2.Ctx
 
-	clients *socket.Clients
+	clients socket.Clients
 
 	tasks *sys.TaskManager
 }

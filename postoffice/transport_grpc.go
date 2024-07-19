@@ -9,6 +9,6 @@ func (po *TransportGrpc) Deliver(_ *model.Block) error {
 	return nil
 }
 
-func NewTransportGrpc() Transport {
-	return &TransportGrpc{}
-}
+//func NewTransportGrpc() Transport {
+//	return &TransportGrpc{}
+//}

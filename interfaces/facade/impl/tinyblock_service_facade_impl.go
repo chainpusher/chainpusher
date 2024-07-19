@@ -11,6 +11,10 @@ type TinyBlockServiceFacadeImpl struct {
 	service application.TinyBlockService
 }
 
+func (t *TinyBlockServiceFacadeImpl) Broadcast(block *model.Block) {
+
+}
+
 func (t *TinyBlockServiceFacadeImpl) Subscribe(clientId int64) {
 	client, err := t.service.Subscribe(clientId)
 	if err != nil {

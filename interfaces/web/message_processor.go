@@ -9,18 +9,18 @@ import (
 )
 
 type MessageProcessor interface {
-	Process(client *socket.Client, message []byte)
+	Process(client socket.Client, message []byte)
 }
 
 type CallbackMessageProcessor struct {
-	callback func(client *socket.Client, message []byte)
+	callback func(client socket.Client, message []byte)
 }
 
-func (c *CallbackMessageProcessor) Process(client *socket.Client, message []byte) {
+func (c *CallbackMessageProcessor) Process(client socket.Client, message []byte) {
 	c.callback(client, message)
 }
 
-func NewCallbackMessageProcessor(callback func(client *socket.Client, message []byte)) *CallbackMessageProcessor {
+func NewCallbackMessageProcessor(callback func(client socket.Client, message []byte)) *CallbackMessageProcessor {
 	return &CallbackMessageProcessor{
 		callback: callback,
 	}
@@ -30,7 +30,7 @@ type JsonRpcMessageProcessor struct {
 	facade facade.TinyBlockServiceFacade
 }
 
-func (p *JsonRpcMessageProcessor) Process(client *socket.Client, message []byte) {
+func (p *JsonRpcMessageProcessor) Process(client socket.Client, message []byte) {
 	var call *dto.JsonRpcDto
 	err := json.Unmarshal(message, &call)
 	if err != nil {

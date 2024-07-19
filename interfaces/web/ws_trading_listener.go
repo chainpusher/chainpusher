@@ -6,13 +6,13 @@ import (
 )
 
 type WSTradingListener struct {
-	clients *socket.Clients
+	clients *socket.ClientsImpl
 }
 
 func (listener *WSTradingListener) BlockGenerated(block *model.Block) {
 	//listener.clients.SendAll(block)
 }
 
-func NewWSTradingListener(clients *socket.Clients) *WSTradingListener {
+func NewWSTradingListener(clients *socket.ClientsImpl) *WSTradingListener {
 	return &WSTradingListener{clients}
 }

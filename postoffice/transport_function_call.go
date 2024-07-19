@@ -9,6 +9,6 @@ func (t *TransportFunctionCall) Deliver(_ *model.Block) error {
 	return nil
 }
 
-func NewTransportFunctionCall() Transport {
-	return &TransportFunctionCall{}
-}
+//func NewTransportFunctionCall() Transport {
+//	return &TransportFunctionCall{}
+//}

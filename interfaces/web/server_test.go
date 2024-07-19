@@ -11,7 +11,7 @@ import (
 
 func TestServer_Start(t *testing.T) {
 
-	processor := web.NewCallbackMessageProcessor(func(client *socket.Client, message []byte) {
+	processor := web.NewCallbackMessageProcessor(func(client socket.Client, message []byte) {
 
 	})
 	server := web.NewServerTask("127.0.0.1", 8080, processor, nil)

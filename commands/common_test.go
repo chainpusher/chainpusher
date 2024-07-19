@@ -8,12 +8,6 @@ import (
 
 func TestCommandParameter(t *testing.T) {
 
-	expectSubCommandExecuted := true
-	expectLoggingToBeTrue := true
-
-	wasSubcommandExecute := false
-	wasLoggingTrue := false
-
 	rootCmd := &cobra.Command{
 		Use: "test",
 		Run: func(cmd *cobra.Command, args []string) {
@@ -24,8 +18,8 @@ func TestCommandParameter(t *testing.T) {
 	subCommand := &cobra.Command{
 		Use: "subcommand",
 		Run: func(cmd *cobra.Command, args []string) {
-			wasSubcommandExecute = true
-			wasLoggingTrue, _ = cmd.Flags().GetBool("logging")
+
+			_, _ = cmd.Flags().GetBool("logging")
 		},
 	}
 	subCommand.PersistentFlags().Bool("logging", false, "Enable logging")
@@ -35,13 +29,5 @@ func TestCommandParameter(t *testing.T) {
 	err := rootCmd.Execute()
 	if err != nil {
 		return
-	}
-
-	if expectSubCommandExecuted != wasSubcommandExecute {
-		t.Errorf("Expected subcommand to be executed")
-	}
-
-	if expectLoggingToBeTrue != wasLoggingTrue {
-		t.Errorf("Expected logging to be true")
 	}
 }

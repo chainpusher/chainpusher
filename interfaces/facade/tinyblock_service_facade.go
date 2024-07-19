@@ -9,4 +9,6 @@ type TinyBlockServiceFacade interface {
 	GetTransactions(command *dto.QueryTransactionsCommand) ([]*model.Transaction, error)
 
 	Subscribe(clientId int64)
+
+	Broadcast(block *model.Block)
 }

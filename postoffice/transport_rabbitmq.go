@@ -10,6 +10,6 @@ func (t *TransportRabbitMQ) Deliver(_ *model.Block) error {
 	return nil
 }
 
-func NewTransportRabbitMQ() Transport {
-	return &TransportRabbitMQ{}
-}
+//func NewTransportRabbitMQ() Transport {
+//	return &TransportRabbitMQ{}
+//}

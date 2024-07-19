@@ -7,7 +7,7 @@ import (
 )
 
 type SocketHandler struct {
-	clients *socket.Clients
+	clients socket.Clients
 
 	processor MessageProcessor
 }
@@ -29,15 +29,15 @@ func (s *SocketHandler) Handle(w http.ResponseWriter, r *http.Request) {
 	logrus.Debugf("Connection closed from %s to %d", r.RemoteAddr, client.GetId())
 }
 
-func (s *SocketHandler) close(client *socket.Client) {
+func (s *SocketHandler) close(client socket.Client) {
 	err := s.clients.Close(client)
 	if err != nil {
 		return
 	}
 }
 
-func (s *SocketHandler) readMessage(client *socket.Client) {
-	messages := client.ReadMessage()
+func (s *SocketHandler) readMessage(client socket.Client) {
+	messages := client.Read()
 	for {
 
 		select {

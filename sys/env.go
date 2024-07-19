@@ -47,6 +47,7 @@ func GetEnv(key string) (string, error) {
 		if err := LoadDotEnv(); err != nil {
 			return "", err
 		}
+		DotEnvFileLoaded = true
 	}
 	return os.Getenv(key), nil
 }
