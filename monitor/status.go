@@ -1,6 +1,9 @@
 package monitor
 
-import "github.com/chainpusher/blockchain/service"
+import (
+	"errors"
+	"github.com/chainpusher/blockchain/service"
+)
 
 type Code uint32
 
@@ -31,12 +34,14 @@ func IsMaxRetries(err error) bool {
 	if err == nil {
 		return false
 	}
-	status, ok := err.(*service.Status)
+	var status *service.Status
+	ok := errors.As(err, &status)
 	if !ok {
 		return false
 	}
 	cause := status.GetCause()
-	causeStatus, ok := cause.(*Status)
+	var causeStatus *Status
+	ok = errors.As(cause, &causeStatus)
 	if !ok {
 		return false
 	}

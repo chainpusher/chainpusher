@@ -83,10 +83,6 @@ func NewCommandRunner(cmd *cobra.Command, options MonitorCommandOptions) *Comman
 	return NewCommandRunnerWithContext(ctx)
 }
 
-func NewDefaultCommandRunner() *CommandRunner {
-	return NewCommandRunnerWithContext(monitor2.NewContext(config.NewEmptyConfig()))
-}
-
 func NewCommandRunnerWithContext(ctx *monitor2.Ctx) *CommandRunner {
 	monitor := NewMonitorCommand(ctx)
 	clients := socket.NewClients()
@@ -171,7 +167,7 @@ func NewRootCommand() *cobra.Command {
 		Long: "Chainpusher is a CLI tool for pushing blockchain data to a remote server. " +
 			"Chainpusher can also monitor blockchain data and push it to a remote server.",
 		Run: func(cmd *cobra.Command, args []string) {
-			cmd.Help()
+			_ = cmd.Help()
 		},
 	}
 
@@ -182,13 +178,6 @@ func NewRootCommand() *cobra.Command {
 	)
 
 	return cmd
-}
-
-func RunCommand() {
-
-	RunCommandWithOptions(MonitorCommandOptions{
-		Listeners: []service.BlockListener{},
-	})
 }
 
 func RunCommandWithOptions(options MonitorCommandOptions) {

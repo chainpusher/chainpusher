@@ -22,7 +22,7 @@ func TestNewTransportTelegram(t *testing.T) {
 		logrus.Error("Failed to get current working directory: ", err)
 	}
 	dotenvFilePath := filepath.Join(cwd, "..", ".env")
-	godotenv.Load(dotenvFilePath)
+	_ = godotenv.Load(dotenvFilePath)
 
 	logrus.Info("Current working directory: ", cwd)
 
@@ -54,7 +54,7 @@ func TestNewTransportTelegram(t *testing.T) {
 			},
 		},
 	}
-	tg.Deliver(block)
+	_ = tg.Deliver(block)
 
 	t.Log("Telegram transport created successfully: ", tg)
 	time.Sleep(5 * time.Second)

@@ -12,8 +12,8 @@ import (
 
 func TestTinyBlockServiceImpl_Broadcast(t *testing.T) {
 
-	var clients socket.Clients = socket.NewClients()
-	var svc application.TinyBlockService = application.NewTinyBlockService(clients)
+	var clients = socket.NewClients()
+	var svc = application.NewTinyBlockService(clients)
 
 	c1 := socket.NewMemoryClient(1)
 	c2 := socket.NewMemoryClient(2)

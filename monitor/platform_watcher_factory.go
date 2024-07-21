@@ -26,7 +26,7 @@ func NewPlatformWatcher(ctx *Ctx, platform model.Platform) (*PlatformWatcher, er
 		blockChainService, err = NewEthereumBlockChainService(ctx, ctx.Listeners)
 		timeForBlockGenerated = 15
 	case model.PlatformTron:
-		blockChainService, err = NewTRONBlockChainService(ctx, ctx.Listeners)
+		blockChainService, err = NewTRONBlockChainService(ctx.Listeners)
 		timeForBlockGenerated = 3
 	default:
 		blockChainService, err = nil, errors.New("platform not supported")
@@ -60,7 +60,7 @@ func NewEthereumBlockChainService(ctx *Ctx, listeners []service.BlockListener) (
 	return service.NewEthereumBlockChainService(url, listeners)
 }
 
-func NewTRONBlockChainService(ctx *Ctx, listeners []service.BlockListener) (service.BlockChainService, error) {
+func NewTRONBlockChainService(listeners []service.BlockListener) (service.BlockChainService, error) {
 	client, err := service.NewTronClient()
 	if err != nil {
 		return nil, err

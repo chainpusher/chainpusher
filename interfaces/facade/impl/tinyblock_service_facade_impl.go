@@ -33,7 +33,7 @@ func (t *TinyBlockServiceFacadeImpl) Subscribe(clientId int64) {
 	}
 }
 
-func (t *TinyBlockServiceFacadeImpl) GetTransactions(command *dto.QueryTransactionsCommand) ([]*model.Transaction, error) {
+func (t *TinyBlockServiceFacadeImpl) GetTransactions(_ *dto.QueryTransactionsCommand) ([]*model.Transaction, error) {
 	return nil, nil
 }
 

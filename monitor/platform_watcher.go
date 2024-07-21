@@ -46,7 +46,7 @@ func (p *PlatformWatcher) FetchBlocks() (*model.Block, error) {
 
 	var block *model.Block
 	var err error
-	var height *big.Int = p.number
+	var height = p.number
 
 	if p.number.Cmp(big.NewInt(1)) == -1 {
 		block, err = p.service.GetLatestBlock()

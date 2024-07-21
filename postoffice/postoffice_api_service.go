@@ -5,7 +5,7 @@ import "github.com/chainpusher/blockchain/model"
 type APIService struct {
 }
 
-func (po *APIService) Deliver(block *model.Block) error {
+func (po *APIService) Deliver(_ *model.Block) error {
 	panic("API service not implemented yet")
 }
 

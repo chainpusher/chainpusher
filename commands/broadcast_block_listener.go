@@ -11,11 +11,11 @@ type BroadcastBlockListener struct {
 	facade facade.TinyBlockServiceFacade
 }
 
-func (b BroadcastBlockListener) BeforeQuerying(height *big.Int) {
+func (b BroadcastBlockListener) BeforeQuerying(_ *big.Int) {
 
 }
 
-func (b BroadcastBlockListener) AfterRawQuerying(block interface{}, err error) {
+func (b BroadcastBlockListener) AfterRawQuerying(_ interface{}, _ error) {
 }
 
 func (b BroadcastBlockListener) AfterQuerying(block *model.Block, err error) {

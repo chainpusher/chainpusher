@@ -9,7 +9,7 @@ import (
 	"github.com/sirupsen/logrus"
 )
 
-var DotEnvFileLoaded bool = false
+var DotEnvFileLoaded = false
 
 func LoadDotEnv() error {
 	paths := []string{"./", ".."}

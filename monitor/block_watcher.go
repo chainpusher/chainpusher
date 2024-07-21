@@ -8,7 +8,7 @@ import (
 	"github.com/sirupsen/logrus"
 )
 
-var NewLineByte []byte = []byte("\n")
+var NewLineByte = []byte("\n")
 
 type BlockWatcher interface {
 	GetChannel() chan interface{}

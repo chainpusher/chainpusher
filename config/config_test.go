@@ -8,7 +8,7 @@ import (
 )
 
 func TestParseConfigFromYamlText(t *testing.T) {
-	var text string = `wallets:
+	var text = `wallets:
   - a
   - b
 
@@ -37,7 +37,7 @@ logger:
 // Test when token is a string
 func TestTelegramTokenIsString(t *testing.T) {
 
-	var text string = `telegram:
+	var text = `telegram:
   tokens:
     - "<token>"
 `
@@ -58,7 +58,7 @@ func TestTelegramTokenIsString(t *testing.T) {
 // Test when token is an object
 func TestTelegramTokenIsObject(t *testing.T) {
 
-	var text string = `telegram:
+	var text = `telegram:
   tokens:
     - token: "<token>"
       chat_id: 1234
@@ -87,7 +87,7 @@ func TestTelegramTokenIsObject(t *testing.T) {
 // Test when token is an object but chat_id is empty
 func TestTelegramTokenIsObjectChatIdEmpty(t *testing.T) {
 
-	var text string = `telegram:
+	var text = `telegram:
   tokens:
     - token: "<token>"
 `
@@ -112,7 +112,7 @@ func TestTelegramTokenIsObjectChatIdEmpty(t *testing.T) {
 }
 
 func TestConfig_KafkaIsValidated(t *testing.T) {
-	var text string = `kafka:
+	var text = `kafka:
   block_topic: block
   raw_block_topic: raw_block
   servers:
@@ -124,7 +124,7 @@ func TestConfig_KafkaIsValidated(t *testing.T) {
 }
 
 func TestConfig_KafkaIsInvalidated(t *testing.T) {
-	var text string = `kafka:
+	var text = `kafka:
   block_topic: block
   raw_block_topic: raw_block
   servers: []`

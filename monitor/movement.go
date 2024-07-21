@@ -20,10 +20,10 @@ func (d *DefaultMovement) BeforeQueryingBlock() {
 
 }
 
-func (d *DefaultMovement) AfterQueryingBlock(block *model.Block) {
+func (d *DefaultMovement) AfterQueryingBlock(_ *model.Block) {
 
 }
 
-func (d *DefaultMovement) WaitTheNextBlockToBeGenerated(watcher *PlatformWatcher, block *model.Block) {
+func (d *DefaultMovement) WaitTheNextBlockToBeGenerated(watcher *PlatformWatcher, _ *model.Block) {
 	time.Sleep(watcher.GetTimeForBlockGenerated() * time.Second)
 }
