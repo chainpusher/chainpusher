@@ -109,3 +109,7 @@ func ParseConfigFromYaml(file string) (*Config, error) {
 
 	return ParseConfigFromYamlText(text)
 }
+
+func NewEmptyConfig() *Config {
+	return &Config{}
+}

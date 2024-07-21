@@ -25,6 +25,6 @@ func (b BroadcastBlockListener) AfterQuerying(block *model.Block, err error) {
 	b.facade.Broadcast(block)
 }
 
-func NewBroadcastBlockListener() service.BlockListener {
-	return &BroadcastBlockListener{}
+func NewBroadcastBlockListener(theFacade facade.TinyBlockServiceFacade) service.BlockListener {
+	return &BroadcastBlockListener{facade: theFacade}
 }

@@ -3,6 +3,8 @@ package web
 import (
 	"context"
 	"fmt"
+	"github.com/chainpusher/chainpusher/application"
+	"github.com/chainpusher/chainpusher/interfaces/facade/impl"
 	"github.com/chainpusher/chainpusher/interfaces/web/socket"
 	"github.com/sirupsen/logrus"
 	"net/http"
@@ -38,6 +40,16 @@ func (s *ServerTask) Running() bool {
 
 func NewServerTask(host string, port int, processor MessageProcessor, clients socket.Clients) *ServerTask {
 	addr := fmt.Sprintf("%s:%d", host, port)
+
+	if clients == nil {
+		clients = socket.NewClients()
+	}
+
+	if processor == nil {
+		svc := application.NewTinyBlockService(clients)
+		f := impl.NewTinyBlockServiceFacade(svc)
+		processor = NewJsonRpcMessageProcess(f)
+	}
 
 	socketHandler := &SocketHandler{clients, processor}
 	mux := http.NewServeMux()

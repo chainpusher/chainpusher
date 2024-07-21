@@ -1,11 +1,16 @@
 package socket
 
-import "github.com/gorilla/websocket"
+import (
+	"github.com/gorilla/websocket"
+	"github.com/sirupsen/logrus"
+)
 
 type ClientImpl struct {
 	connection *websocket.Conn
 
 	id int64
+
+	logger *logrus.Entry
 }
 
 func (c *ClientImpl) Emit(message interface{}) error {
@@ -23,7 +28,7 @@ func (c *ClientImpl) Read() chan []byte {
 			_, message, err := c.connection.ReadMessage()
 			if err != nil {
 				close(messages)
-				return
+				break
 			}
 			messages <- message
 		}
@@ -40,5 +45,6 @@ func NewClient(id int64, c *websocket.Conn) Client {
 	return &ClientImpl{
 		id:         id,
 		connection: c,
+		logger:     logrus.WithFields(logrus.Fields{"id": id}),
 	}
 }

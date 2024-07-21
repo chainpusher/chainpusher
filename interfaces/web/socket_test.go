@@ -2,13 +2,18 @@ package web_test
 
 import (
 	"encoding/json"
+	"github.com/chainpusher/blockchain/model"
 	"github.com/chainpusher/chainpusher/application"
+	"github.com/chainpusher/chainpusher/commands"
+	"github.com/chainpusher/chainpusher/config"
 	"github.com/chainpusher/chainpusher/interfaces/facade/dto"
 	"github.com/chainpusher/chainpusher/interfaces/facade/impl"
 	"github.com/chainpusher/chainpusher/interfaces/web"
 	"github.com/chainpusher/chainpusher/interfaces/web/socket"
+	"github.com/chainpusher/chainpusher/monitor"
 	"github.com/gorilla/websocket"
 	"github.com/stretchr/testify/assert"
+	"sync"
 	"testing"
 )
 
@@ -129,4 +134,53 @@ func TestSocket_Subscribe(t *testing.T) {
 		return
 	}
 
+}
+
+func TestSocket_Broadcast(t *testing.T) {
+
+	go RunServer()
+
+	total := 10
+	wg := sync.WaitGroup{}
+
+	for i := 0; i < total; i++ {
+		wg.Add(1)
+
+		c := socket.NewMockClient()
+		go ReadBlockEvent(c, &wg)
+	}
+
+	wg.Wait()
+
+}
+
+func RunServer() {
+	ctx := monitor.NewContext(config.NewEmptyConfig())
+	ctx.Platforms = []model.Platform{model.PlatformTron}
+	runner := commands.NewCommandRunnerWithContext(ctx)
+
+	runner.Run()
+}
+
+func ReadBlockEvent(c socket.Client, wg *sync.WaitGroup) {
+	err := c.Emit(&dto.JsonRpcDto{Method: "subscribe"})
+
+	if err != nil {
+		panic(err)
+	}
+
+	reader := c.Read()
+
+	for {
+		select {
+		case m := <-reader:
+
+			var response *dto.JsonRpcEvent
+			_ = json.Unmarshal(m, &response)
+
+			if response.Data != nil {
+				wg.Done()
+			}
+		}
+	}
 }

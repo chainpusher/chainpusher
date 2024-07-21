@@ -5,6 +5,7 @@ import (
 	"github.com/chainpusher/chainpusher/application"
 	"github.com/chainpusher/chainpusher/interfaces/facade"
 	"github.com/chainpusher/chainpusher/interfaces/facade/dto"
+	"github.com/sirupsen/logrus"
 )
 
 type TinyBlockServiceFacadeImpl struct {
@@ -12,21 +13,24 @@ type TinyBlockServiceFacadeImpl struct {
 }
 
 func (t *TinyBlockServiceFacadeImpl) Broadcast(block *model.Block) {
-
+	t.service.Broadcast(block)
 }
 
 func (t *TinyBlockServiceFacadeImpl) Subscribe(clientId int64) {
 	client, err := t.service.Subscribe(clientId)
 	if err != nil {
+		logrus.WithFields(logrus.Fields{"clientId": clientId}).Error(err)
 		return
 	}
 
-	client.Emit(&dto.JsonRpcResponseDto{
-		Call: &dto.JsonRpcDto{
-			Method: "subscribe",
-			Params: nil,
-		},
+	err = client.Emit(&dto.JsonRpcEvent{
+		Name: "subscribe",
+		Data: nil,
 	})
+
+	if err != nil {
+		logrus.WithFields(logrus.Fields{"clientId": clientId}).Error(err)
+	}
 }
 
 func (t *TinyBlockServiceFacadeImpl) GetTransactions(command *dto.QueryTransactionsCommand) ([]*model.Transaction, error) {

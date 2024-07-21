@@ -1,6 +1,7 @@
 package socket
 
 import (
+	"github.com/sirupsen/logrus"
 	"sync"
 )
 
@@ -8,6 +9,7 @@ type Room struct {
 	name    string
 	clients []Client
 	mutex   sync.Mutex
+	logger  *logrus.Entry
 }
 
 func (r *Room) Join(client Client) {
@@ -41,6 +43,7 @@ func (r *Room) GetClients() []Client {
 
 func NewRoom(name string) *Room {
 	return &Room{
-		name: name,
+		name:   name,
+		logger: logrus.WithFields(logrus.Fields{name: name}),
 	}
 }

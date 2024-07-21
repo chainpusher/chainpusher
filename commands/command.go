@@ -48,7 +48,7 @@ func (r *CommandRunner) Run() {
 }
 
 func (r *CommandRunner) signal(done chan bool) {
-	signals := make(chan os.Signal, 1)
+	signals := make(chan os.Signal, 2)
 	signal.Notify(signals, syscall.SIGINT, syscall.SIGTERM)
 	aSignal := <-signals
 	logrus.Debugf("Signal received: %s", aSignal)
@@ -79,12 +79,24 @@ func (r *CommandRunner) printStackTrace() {
 
 func NewCommandRunner(cmd *cobra.Command, options MonitorCommandOptions) *CommandRunner {
 	ctx := createCtx(cmd, options)
+
+	return NewCommandRunnerWithContext(ctx)
+}
+
+func NewDefaultCommandRunner() *CommandRunner {
+	return NewCommandRunnerWithContext(monitor2.NewContext(config.NewEmptyConfig()))
+}
+
+func NewCommandRunnerWithContext(ctx *monitor2.Ctx) *CommandRunner {
 	monitor := NewMonitorCommand(ctx)
 	clients := socket.NewClients()
 	svc := application.NewTinyBlockService(clients)
 	facade := impl.NewTinyBlockServiceFacade(svc)
 	processor := web.NewJsonRpcMessageProcess(facade)
 	server := web.NewServerTask("localhost", 8080, processor, clients)
+
+	broadcastBlockListener := NewBroadcastBlockListener(facade)
+	ctx.AddBlockListener(broadcastBlockListener)
 
 	tm := sys.NewTaskManager()
 	tm.Add(server)

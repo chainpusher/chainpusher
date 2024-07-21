@@ -4,7 +4,6 @@ import (
 	"sync"
 
 	"github.com/chainpusher/blockchain/model"
-	"github.com/chainpusher/blockchain/service"
 	"github.com/chainpusher/chainpusher/monitor"
 	"github.com/sirupsen/logrus"
 )
@@ -42,8 +41,7 @@ func (m *MonitorCommand) Start() error {
 	logrus.Tracef("Starting monitor command")
 	var wg sync.WaitGroup
 
-	platforms := service.GetAllPlatform()
-	for _, platform := range platforms {
+	for _, platform := range m.ctx.GetPlatforms() {
 		wg.Add(1)
 
 		m.StartPlatformWithWaitGroup(platform, &wg)
