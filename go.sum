@@ -22,6 +22,10 @@ github.com/cespare/xxhash/v2 v2.3.0 h1:UL815xU9SqsFlibzuggzjXhog7bL6oX9BbNZnL2UF
 github.com/cespare/xxhash/v2 v2.3.0/go.mod h1:VGX0DQ3Q6kWi7AoAeZDth3/j3BFtOZR5XLFGgcrjCOs=
 github.com/chainpusher/blockchain v0.0.0-20240615153829-52fd2220dcef h1:cF9ndeVPs28Ufc/bcVhQqAMBYPFD3us3awwni2BBfx8=
 github.com/chainpusher/blockchain v0.0.0-20240615153829-52fd2220dcef/go.mod h1:ne6o66j69TVnWbrnuGMytYfrneMATM0BydN8Ldx8o7s=
+github.com/chainpusher/blockchain v0.0.0-20240620022034-bac2478307d1 h1:Ocpf98jgn5ZFvdRi7fBoKBVEJZRoXBJ/xE4KrF0PNAg=
+github.com/chainpusher/blockchain v0.0.0-20240620022034-bac2478307d1/go.mod h1:yS2ZVgxe544syHpufLd6yMx59eSrSoxmdv7OUbyHHko=
+github.com/chainpusher/blockchain v0.0.0-20240723030317-517e187f7ecb h1:N/WhCyjGGdMFJasoEkEbrlnVgrzgB2HD1bYJH2TS82E=
+github.com/chainpusher/blockchain v0.0.0-20240723030317-517e187f7ecb/go.mod h1:yS2ZVgxe544syHpufLd6yMx59eSrSoxmdv7OUbyHHko=
 github.com/client9/misspell v0.3.4/go.mod h1:qj6jICC3Q7zFZvVWo7KLAzC3yx5G7kyvSDkc90ppPyw=
 github.com/cncf/udpa/go v0.0.0-20201120205902-5459f2c99403/go.mod h1:WmhPx2Nbnhtbo57+VJT5O0JRkEi1Wbu0z5j0R8u5Hbk=
 github.com/cockroachdb/errors v1.11.1 h1:xSEW75zKaKCWzR3OfxXUxgrk/NtT4G1MiOv5lWZazG8=

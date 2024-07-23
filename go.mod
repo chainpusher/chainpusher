@@ -3,7 +3,7 @@ module github.com/chainpusher/chainpusher
 go 1.22.3
 
 require (
-	github.com/chainpusher/blockchain v0.0.0-20240615153829-52fd2220dcef
+	github.com/chainpusher/blockchain v0.0.0-20240723030317-517e187f7ecb
 	github.com/ethereum/go-ethereum v1.14.5
 	github.com/go-telegram-bot-api/telegram-bot-api/v5 v5.5.1
 	github.com/joho/godotenv v1.5.1
