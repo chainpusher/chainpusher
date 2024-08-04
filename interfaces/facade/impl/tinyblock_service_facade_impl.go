@@ -33,6 +33,23 @@ func (t *TinyBlockServiceFacadeImpl) Subscribe(clientId int64) {
 	}
 }
 
+func (t *TinyBlockServiceFacadeImpl) Unsubscribe(clientId int64) {
+	client, err := t.service.Unsubscribe(clientId)
+	if err != nil {
+		logrus.WithFields(logrus.Fields{"clientId": clientId}).Error(err)
+		return
+	}
+
+	err = client.Emit(&dto.JsonRpcEvent{
+		Name: "unsubscribe",
+		Data: nil,
+	})
+
+	if err != nil {
+		logrus.WithFields(logrus.Fields{"clientId": clientId}).Error(err)
+	}
+}
+
 func (t *TinyBlockServiceFacadeImpl) GetTransactions(_ *dto.QueryTransactionsCommand) ([]*model.Transaction, error) {
 	return nil, nil
 }

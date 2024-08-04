@@ -10,5 +10,7 @@ type TinyBlockServiceFacade interface {
 
 	Subscribe(clientId int64)
 
+	Unsubscribe(clientId int64)
+
 	Broadcast(block *model.Block)
 }

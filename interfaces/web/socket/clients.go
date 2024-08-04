@@ -14,4 +14,6 @@ type Clients interface {
 	Room(name string) *Room
 
 	Join(clientId int64, roomName string) error
+
+	Leave(clientId int64, roomName string) error
 }

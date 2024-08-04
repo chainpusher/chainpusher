@@ -19,7 +19,7 @@ func (r *Room) Join(client Client) {
 	r.clients = append(r.clients, client)
 }
 
-func (r *Room) Leave(client *ClientImpl) {
+func (r *Room) Leave(client Client) {
 	r.mutex.Lock()
 	defer r.mutex.Unlock()
 

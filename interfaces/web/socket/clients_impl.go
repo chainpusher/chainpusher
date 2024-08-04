@@ -77,6 +77,22 @@ func (c *ClientsImpl) Join(clientId int64, roomName string) error {
 	return nil
 }
 
+func (c *ClientsImpl) Leave(clientId int64, roomName string) error {
+	client, err := c.Get(clientId)
+	if err != nil {
+		return err
+	}
+
+	room := c.rooms[roomName]
+	if room == nil {
+		return errors.New("room not found")
+	}
+
+	room.Leave(client)
+
+	return nil
+}
+
 func (c *ClientsImpl) Room(name string) *Room {
 	room := c.rooms[name]
 	if room == nil {

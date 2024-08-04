@@ -8,5 +8,7 @@ import (
 type TinyBlockService interface {
 	Subscribe(clientId int64) (socket.Client, error)
 
+	Unsubscribe(clientId int64) (socket.Client, error)
+
 	Broadcast(block *model.Block)
 }
