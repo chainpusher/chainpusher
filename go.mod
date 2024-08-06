@@ -6,6 +6,7 @@ require (
 	github.com/chainpusher/blockchain v0.0.0-20240723030317-517e187f7ecb
 	github.com/ethereum/go-ethereum v1.14.5
 	github.com/go-telegram-bot-api/telegram-bot-api/v5 v5.5.1
+	github.com/gorilla/websocket v1.5.3
 	github.com/joho/godotenv v1.5.1
 	github.com/sirupsen/logrus v1.9.3
 	github.com/spf13/cobra v1.8.0
@@ -30,7 +31,6 @@ require (
 	github.com/go-ole/go-ole v1.3.0 // indirect
 	github.com/golang/protobuf v1.5.4 // indirect
 	github.com/google/uuid v1.3.0 // indirect
-	github.com/gorilla/websocket v1.5.3 // indirect
 	github.com/holiman/uint256 v1.2.4 // indirect
 	github.com/inconshreveable/mousetrap v1.1.0 // indirect
 	github.com/mitchellh/go-homedir v1.1.0 // indirect
