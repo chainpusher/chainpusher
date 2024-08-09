@@ -2,14 +2,14 @@ package gorm_test
 
 import (
 	"github.com/chainpusher/chainpusher/payment/domain/model/account"
-	"github.com/chainpusher/chainpusher/payment/domain/shared"
+	"github.com/chainpusher/chainpusher/payment/domain/model/test"
 	"github.com/chainpusher/chainpusher/payment/infrastructure/gorm"
 	"github.com/stretchr/testify/assert"
 	"testing"
 )
 
 func TestAccountRepository_FindBySecretKey(t *testing.T) {
-	db := shared.SetupTestDB()
+	db := test.SetupTestDB()
 	var a account.Account
 	db.Preload("Secrets").First(&a)
 

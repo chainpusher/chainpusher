@@ -2,7 +2,7 @@ package internal_test
 
 import (
 	"github.com/chainpusher/chainpusher/payment/domain/model/charge"
-	"github.com/chainpusher/chainpusher/payment/domain/shared"
+	"github.com/chainpusher/chainpusher/payment/domain/model/test"
 	"github.com/chainpusher/chainpusher/payment/infrastructure/gorm"
 	dto2 "github.com/chainpusher/chainpusher/payment/interfaces/charge/facade/dto"
 	"github.com/chainpusher/chainpusher/payment/interfaces/charge/facade/internal"
@@ -11,7 +11,7 @@ import (
 )
 
 func TestCharge(t *testing.T) {
-	db := shared.SetupTestDB()
+	db := test.SetupTestDB()
 	f := internal.NewChargeServiceFacade(db)
 	repo := gorm.NewChargeRepository(db)
 
@@ -25,5 +25,5 @@ func TestCharge(t *testing.T) {
 	c2, err := repo.Find(c.Id)
 	assert.Nil(t, err)
 	assert.NotNil(t, c2)
-	assert.Equal(t, charge.PAID, c2.Status)
+	assert.Equal(t, charge.Paid, c2.Status)
 }

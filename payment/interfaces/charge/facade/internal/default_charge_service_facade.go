@@ -38,27 +38,9 @@ func (f *DefaultChargeServiceFacade) Charge(cmd *dto.CreateChargeDTO) (*dto.Char
 
 }
 
-func (f *DefaultChargeServiceFacade) Charged(id int64) {
-	c, err := f.chargeRepository.Find(id)
-	if err != nil {
+func (f *DefaultChargeServiceFacade) Charged(blockchain *dto.BlockchainDTO) {
 
-	}
-	if err := f.service.Charged(c); err != nil {
-
-	}
 }
-
-//func NewChargeServiceFacade(
-//	accountRepository account.Repository,
-//	assembler *assembler.ChargeDTOAssembler,
-//	service application.ChargeService) facade.ChargeServiceFacade {
-//
-//	return &DefaultChargeServiceFacade{
-//		accountRepository: accountRepository,
-//		assembler:  assembler,
-//		service:    service,
-//	}
-//}
 
 func NewChargeServiceFacade(db *gorm.DB) facade.ChargeServiceFacade {
 	r := gorm2.NewAccountRepository(db)

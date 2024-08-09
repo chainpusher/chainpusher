@@ -2,7 +2,10 @@ package gorm
 
 import (
 	"github.com/chainpusher/chainpusher/payment/domain/model/charge"
+	"github.com/chainpusher/chainpusher/payment/domain/model/transaction"
+	"github.com/chainpusher/chainpusher/payment/domain/shared"
 	"gorm.io/gorm"
+	"time"
 )
 
 type ChargeRepository struct {
@@ -32,6 +35,21 @@ func (p *ChargeRepository) Find(id int64) (*charge.Charge, error) {
 	}
 
 	return &c, nil
+}
+
+func (p *ChargeRepository) FindChargingByTransactions(transactions shared.Slice[*transaction.Transaction]) (charge.Charges, error) {
+	var charges []*charge.Charge
+	r := p.
+		db.
+		Preload("Pool").
+		Where("status = ?", charge.Unpaid).
+		Where("expired_at > ?", time.Now()).
+		Find(&charges)
+	if r.Error != nil {
+		return nil, r.Error
+	}
+
+	return charges, nil
 }
 
 func NewChargeRepository(db *gorm.DB) *ChargeRepository {

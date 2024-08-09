@@ -1,4 +1,4 @@
-package shared
+package test
 
 import (
 	"github.com/chainpusher/chainpusher/payment/domain/model/account"
@@ -45,6 +45,8 @@ func SetupTestDB() *gorm.DB {
 
 	err = db.AutoMigrate(
 		&charge.Charge{},
+		&charge.Wallet{},
+		&charge.WalletPool{},
 		&account.Account{},
 		&secret.Secret{},
 		&wallet.Wallet{},

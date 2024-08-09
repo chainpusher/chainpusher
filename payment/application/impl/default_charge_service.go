@@ -4,7 +4,8 @@ import (
 	"github.com/chainpusher/chainpusher/payment/application"
 	"github.com/chainpusher/chainpusher/payment/domain/model/account"
 	"github.com/chainpusher/chainpusher/payment/domain/model/charge"
-	"time"
+	"github.com/chainpusher/chainpusher/payment/domain/model/transaction"
+	"github.com/chainpusher/chainpusher/payment/domain/shared"
 )
 
 type DefaultChargeService struct {
@@ -13,8 +14,6 @@ type DefaultChargeService struct {
 
 func (svc *DefaultChargeService) Charge(a *account.Account, c *charge.Charge) (*charge.Charge, error) {
 
-	a.PickWallet(c)
-
 	if err := svc.repository.Save(c); err != nil {
 		return nil, err
 	}
@@ -22,13 +21,16 @@ func (svc *DefaultChargeService) Charge(a *account.Account, c *charge.Charge) (*
 	return c, nil
 }
 
-func (svc *DefaultChargeService) Charged(c *charge.Charge) error {
-	c.Status = charge.PAID
-	c.PaidAt = time.Now()
+func (svc *DefaultChargeService) Charged(transactions shared.Slice[*transaction.Transaction]) error {
+	var exceptions = make(shared.Slice[error], 0)
 
-	if err := svc.repository.Save(c); err != nil {
-		return err
-	}
+	charges, err := svc.repository.FindChargingByTransactions(transactions)
+	exceptions.Add(err)
+
+	charges = charges.MatchingTransactionsHaveBeenPaid(transactions)
+	err = svc.repository.Complete(charges)
+	exceptions.Add(err)
+
 	return nil
 }
 
