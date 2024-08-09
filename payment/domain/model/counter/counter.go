@@ -9,3 +9,12 @@ type Counter struct {
 	CreatedAt time.Time
 	UpdatedAt time.Time
 }
+
+func NewCounter(key string) *Counter {
+	return &Counter{
+		Key:       key,
+		Value:     0,
+		CreatedAt: time.Now(),
+		UpdatedAt: time.Now(),
+	}
+}

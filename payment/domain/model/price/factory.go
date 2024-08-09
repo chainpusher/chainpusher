@@ -3,7 +3,6 @@ package price
 import (
 	"github.com/chainpusher/chainpusher/payment/domain/model/counter"
 	"strconv"
-	"time"
 )
 
 type Factory struct {
@@ -17,32 +16,43 @@ func (f *Factory) AskForPrice(amount int64) (*Price, error) {
 	var c *counter.Counter
 	var err error
 	key := strconv.FormatInt(amount, 10)
-	if p, err = f.priceRepository.FindPriceByAmount(amount); err == nil {
-		p.Using = true
+	if p, err = f.priceRepository.FindPriceByAmount(amount); p != nil {
+		p.Used = true
 		return p, nil
 	}
 
-	if c, err = f.counterRepository.FindCounterByKey(key); err != nil {
+	affected, err := f.counterRepository.IncrementCounterByKey(key)
+	if err != nil {
 		return nil, err
 	}
 
-	if c == nil {
-		c = &counter.Counter{
-			Value:     0,
-			Key:       key,
-			CreatedAt: time.Now(),
-			UpdatedAt: time.Now(),
+	if affected == 0 {
+		c = counter.NewCounter(key)
+		if err = f.counterRepository.Save(c); err != nil {
+			return nil, err
 		}
 	} else {
-		c.Value++
+		if c, err = f.counterRepository.FindCounterByKey(key); err != nil {
+			return nil, err
+		}
 	}
 
-	p.State = c.Value
-	p.Amount = amount
+	p = &Price{
+		Amount: amount,
+		State:  c.Value,
+		Used:   true,
+	}
 
-	if err = f.counterRepository.Save(c); err != nil {
+	if err := f.priceRepository.Save(p); err != nil {
 		return nil, err
 	}
 
 	return p, nil
+}
+
+func NewFactory(counterRepository counter.Repository, priceRepository Repository) *Factory {
+	return &Factory{
+		counterRepository: counterRepository,
+		priceRepository:   priceRepository,
+	}
 }

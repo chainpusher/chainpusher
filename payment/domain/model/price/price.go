@@ -6,7 +6,7 @@ type Price struct {
 	Id        int64
 	Amount    int64
 	State     int
-	Using     bool
+	Used      bool
 	CreatedAt time.Time
 	UpdatedAt time.Time
 }

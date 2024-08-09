@@ -3,6 +3,8 @@ package test
 import (
 	"github.com/chainpusher/chainpusher/payment/domain/model/account"
 	"github.com/chainpusher/chainpusher/payment/domain/model/charge"
+	"github.com/chainpusher/chainpusher/payment/domain/model/counter"
+	"github.com/chainpusher/chainpusher/payment/domain/model/price"
 	"github.com/chainpusher/chainpusher/payment/domain/model/secret"
 	"github.com/chainpusher/chainpusher/payment/domain/model/wallet"
 	"gorm.io/driver/sqlite"
@@ -51,6 +53,8 @@ func SetupTestDB() *gorm.DB {
 		&secret.Secret{},
 		&wallet.Wallet{},
 		&wallet.Pool{},
+		&price.Price{},
+		&counter.Counter{},
 	)
 	if err != nil {
 		panic("failed to migrate database")
@@ -61,5 +65,5 @@ func SetupTestDB() *gorm.DB {
 		panic("failed to setup fixtures")
 	}
 
-	return db
+	return db.Debug()
 }
