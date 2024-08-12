@@ -27,7 +27,7 @@ func (account *Account) PickWallets() shared.Slice[charge.Wallet] {
 		w := charge.Wallet{
 			Blockchain: v[0].Blockchain,
 			Crypto:     v[0].Crypto,
-			Text:       v[0].Address,
+			Address:    v[0].Address,
 		}
 		wallets = append(wallets, w)
 	})

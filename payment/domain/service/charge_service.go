@@ -17,7 +17,8 @@ func (svc *ChargeService) Charge(a *account.Account, c *charge.Charge) (*charge.
 		return nil, err
 	}
 
-	a.PickWallets()
+	ws := a.PickWallets()
+	c.Wallets = ws
 
 	c.AssignDefaultValidityPeriod()
 	c.Price = *p

@@ -10,7 +10,7 @@ func TestChargeRepository_FindChargingByTransactions(t *testing.T) {
 	//var a1 *account.Account
 	//db.First(&a1)
 	//
-	//w := charge.Wallet{Text: "1"}
+	//w := charge.Wallet{Address: "1"}
 	//p := charge.WalletPool{
 	//	Wallets: []charge.Wallet{w},
 	//}

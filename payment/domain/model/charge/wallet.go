@@ -5,5 +5,9 @@ type Wallet struct {
 	ChargeId   int64
 	Blockchain string
 	Crypto     string
-	Text       string
+	Address    string
+}
+
+func (Wallet) TableName() string {
+	return "charge_wallets"
 }

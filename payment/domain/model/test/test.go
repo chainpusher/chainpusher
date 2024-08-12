@@ -16,8 +16,8 @@ func SetupWalletPoolFixtures(db *gorm.DB, a *account.Account) error {
 	a1 := wallet.Wallet{AccountId: a.ID, Blockchain: "ETHEREUM", Crypto: "USDT", Address: "1"}
 	a2 := wallet.Wallet{AccountId: a.ID, Blockchain: "TRON", Crypto: "USDT", Address: "2"}
 
-	db.Create(&a1)
-	db.Create(&a2)
+	a.Wallets = []wallet.Wallet{a1, a2}
+
 	return nil
 }
 
