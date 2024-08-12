@@ -68,7 +68,7 @@ func NewMonitorCommand(ctx *monitor.Ctx) *MonitorCommand {
 
 	w := monitor.NewBlockLoggingWatcher(channel, c.BlockLoggingFile)
 	if w != nil {
-		logrus.Debug("Block logging watcher created")
+		logrus.Debug("Blockchain logging watcher created")
 		w.Start()
 	}
 

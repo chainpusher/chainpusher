@@ -1,9 +1,9 @@
 package charge
 
 type Wallet struct {
-	ID           int64
-	WalletPoolId int64
-	Block        string
-	Crypto       string
-	Text         string
+	ID         int64
+	ChargeId   int64
+	Blockchain string
+	Crypto     string
+	Text       string
 }

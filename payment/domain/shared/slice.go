@@ -75,3 +75,16 @@ func (s Slice[T]) GroupBy(fn func(T) interface{}) map[interface{}]Slice[T] {
 	}
 	return groups
 }
+
+func GroupBy[K comparable, V any](slice Slice[V], fn func(V) K) Table[K, Slice[V]] {
+	groups := make(Table[K, Slice[V]])
+	for _, v := range slice {
+		key := fn(v)
+		groups[key] = append(groups[key], v)
+	}
+	return groups
+}
+
+func Of[T any](items ...T) Slice[T] {
+	return items
+}

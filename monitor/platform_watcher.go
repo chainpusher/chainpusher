@@ -58,7 +58,7 @@ func (p *PlatformWatcher) FetchBlocks() (*model.Block, error) {
 		return block, err
 	}
 
-	logrus.Debugf("%s: Block %d fetched (at %v) with %d transactions", p.platform.String(),
+	logrus.Debugf("%s: Blockchain %d fetched (at %v) with %d transactions", p.platform.String(),
 		p.number, block.CreatedAt, len(block.Transactions))
 
 	p.number = block.Height.Add(block.Height, big.NewInt(1))
@@ -73,7 +73,7 @@ func (p *PlatformWatcher) RunUntilNothingIsNotFound(height *big.Int) (*model.Blo
 		if err != nil {
 			logrus.Tracef("%s: Error fetching block %d: %v", p.platform.String(), height, err)
 			if service.IsNotFound(err) {
-				logrus.Tracef("%s: Block %d not found. Retrying %d times ...", p.platform.String(), height, i+1)
+				logrus.Tracef("%s: Blockchain %d not found. Retrying %d times ...", p.platform.String(), height, i+1)
 				time.Sleep(1 * time.Second)
 				continue
 			}

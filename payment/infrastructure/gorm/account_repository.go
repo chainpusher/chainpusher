@@ -13,8 +13,7 @@ func (repository *AccountRepository) FindBySecretKey(secretKey string) (*account
 	var a account.Account
 	repository.
 		db.
-		Preload("Pool").
-		Preload("Pool.Wallets").
+		Preload("Wallets").
 		Preload("Secrets", "key = ?", secretKey).
 		First(&a)
 	return &a, nil

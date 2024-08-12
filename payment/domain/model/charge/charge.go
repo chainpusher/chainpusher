@@ -14,6 +14,7 @@ type Charge struct {
 	AccountId      int64
 	Price          price.Price
 	PriceId        int64
+	Wallets        []Wallet
 	Meta           datatypes.JSON `gorm:"type:json"`
 	ValidityPeriod int
 	Status         Status
@@ -25,4 +26,10 @@ type Charge struct {
 
 func (charge *Charge) AssignWallets(wallets []Wallet) {
 
+}
+
+func (charge *Charge) AssignDefaultValidityPeriod() {
+	if charge.ValidityPeriod == 0 {
+		charge.ValidityPeriod = int((time.Hour * 24).Seconds())
+	}
 }

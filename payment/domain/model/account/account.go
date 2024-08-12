@@ -1,38 +1,38 @@
 package account
 
 import (
+	"fmt"
 	"github.com/chainpusher/chainpusher/payment/domain/model/charge"
 	"github.com/chainpusher/chainpusher/payment/domain/model/secret"
 	"github.com/chainpusher/chainpusher/payment/domain/model/wallet"
+	"github.com/chainpusher/chainpusher/payment/domain/shared"
 	"time"
 )
 
 type Account struct {
 	ID        int64 `gorm:"foreignKey:AccountId"`
-	Pool      wallet.Pool
+	Wallets   []wallet.Wallet
 	Secrets   []secret.Secret
 	CreatedAt time.Time
 	UpdatedAt time.Time
 }
 
-func (account *Account) PickWallet(c *charge.Charge) *charge.WalletPool {
-	// TODO: Implement this method
+func (account *Account) PickWallets() shared.Slice[charge.Wallet] {
+	wallets := make(shared.Slice[charge.Wallet], 0)
+	grouped := shared.GroupBy(shared.Of(account.Wallets...), func(w wallet.Wallet) string {
+		return fmt.Sprintf("%s-%s", w.Blockchain, w.Crypto)
+	})
 
-	groups := account.Pool.Groups()
-
-	var pool charge.WalletPool
-	var wallets []charge.Wallet
-	for blockchain := range groups {
-		ws := groups[blockchain]
-		if len(ws) == 0 {
-			continue
+	grouped.ForEach(func(k string, v shared.Slice[wallet.Wallet]) {
+		w := charge.Wallet{
+			Blockchain: v[0].Blockchain,
+			Crypto:     v[0].Crypto,
+			Text:       v[0].Address,
 		}
-		w := ws[0]
-		wallets = append(wallets, charge.Wallet{Block: w.Blockchain, Crypto: w.Crypto, Text: w.Address})
-	}
-	pool.Wallets = wallets
+		wallets = append(wallets, w)
+	})
 
-	return &pool
+	return wallets
 }
 
 func NewAccount() (*Account, error) {

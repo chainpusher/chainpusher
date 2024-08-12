@@ -48,7 +48,27 @@ func TestSlice_Filter(t *testing.T) {
 	assert.Equal(t, shared.Slice[int]{0, 2, 4, 6, 8}, filtered)
 }
 
-func TestSlice_ToSlice(t *testing.T) {
-	//s := shared.Slice[int]{1, 2}
-	//assert.Equal(t, []int{1, 2}, s.ToSlice())
+func TestSlice_GroupBy(t *testing.T) {
+	s := shared.Slice[int]{1, 2}
+
+	grouped := shared.GroupBy(s, func(i int) string {
+		return strconv.Itoa(i)
+	})
+
+	assert.Equal(t, 1, grouped["1"][0])
+	assert.Equal(t, 2, grouped["2"][0])
+}
+
+func TestSlice_Of(t *testing.T) {
+	assert.Equal(t, shared.Slice[int]{1, 2, 3}, shared.Of([]int{1, 2, 3}...))
+}
+
+func TestSlice_FlatMap(t *testing.T) {
+	s := shared.Slice[shared.Slice[int]]{
+		shared.Slice[int]{1, 2},
+	}
+
+	shared.FlatMap(s, func(i shared.Slice[int]) int {
+		return i[0]
+	})
 }

@@ -37,6 +37,10 @@ func (p *ChargeRepository) Find(id int64) (*charge.Charge, error) {
 	return &c, nil
 }
 
+func (p *ChargeRepository) FindCharging() ([]*charge.Charge, error) {
+	return nil, nil
+}
+
 func (p *ChargeRepository) FindChargingByTransactions(transactions shared.Slice[*transaction.Transaction]) (charge.Charges, error) {
 	var charges []*charge.Charge
 	r := p.
@@ -50,6 +54,14 @@ func (p *ChargeRepository) FindChargingByTransactions(transactions shared.Slice[
 	}
 
 	return charges, nil
+}
+
+func (p *ChargeRepository) Complete(charges charge.Charges) error {
+	for _, c := range charges {
+		c.Status = charge.Paid
+		p.db.Updates(c)
+	}
+	return nil
 }
 
 func NewChargeRepository(db *gorm.DB) *ChargeRepository {

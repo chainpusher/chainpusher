@@ -5,15 +5,20 @@ import (
 	"github.com/chainpusher/chainpusher/payment/domain/model/account"
 	"github.com/chainpusher/chainpusher/payment/domain/model/charge"
 	"github.com/chainpusher/chainpusher/payment/domain/model/transaction"
+	"github.com/chainpusher/chainpusher/payment/domain/service"
 	"github.com/chainpusher/chainpusher/payment/domain/shared"
 )
 
 type DefaultChargeService struct {
-	repository charge.Repository
+	chargeService *service.ChargeService
+	repository    charge.Repository
 }
 
 func (svc *DefaultChargeService) Charge(a *account.Account, c *charge.Charge) (*charge.Charge, error) {
-
+	var err error
+	if c, err = svc.chargeService.Charge(a, c); err != nil {
+		return nil, err
+	}
 	if err := svc.repository.Save(c); err != nil {
 		return nil, err
 	}
@@ -34,8 +39,9 @@ func (svc *DefaultChargeService) Charged(transactions shared.Slice[*transaction.
 	return nil
 }
 
-func NewChargeService(repository charge.Repository) application.ChargeService {
+func NewChargeService(chargeService *service.ChargeService, repository charge.Repository) application.ChargeService {
 	return &DefaultChargeService{
-		repository: repository,
+		chargeService: chargeService,
+		repository:    repository,
 	}
 }

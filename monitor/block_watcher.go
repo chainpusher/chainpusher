@@ -79,7 +79,7 @@ func (b *BlockLoggingWatcher) GetChannel() chan interface{} {
 func NewBlockLoggingWatcher(channel chan interface{}, rawFilePath string) BlockWatcher {
 
 	if len(rawFilePath) == 0 {
-		logrus.Debug("Block logging file path is empty")
+		logrus.Debug("Blockchain logging file path is empty")
 		return nil
 	}
 
@@ -92,7 +92,7 @@ func NewBlockLoggingWatcher(channel chan interface{}, rawFilePath string) BlockW
 		}
 		rawFilePath = path.Join(wd, rawFilePath)
 	}
-	logrus.Debugf("Block logging file path: %s", rawFilePath)
+	logrus.Debugf("Blockchain logging file path: %s", rawFilePath)
 
 	fd, err := os.OpenFile(rawFilePath, os.O_APPEND|os.O_CREATE|os.O_WRONLY, 0644)
 	if err != nil {

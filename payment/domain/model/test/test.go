@@ -12,16 +12,12 @@ import (
 )
 
 func SetupWalletPoolFixtures(db *gorm.DB, a *account.Account) error {
-	pool := wallet.Pool{}
 
-	a1 := wallet.Wallet{Blockchain: "ETHEREUM", Crypto: "USDT", Address: "1"}
-	a2 := wallet.Wallet{Blockchain: "TRON", Crypto: "USDT", Address: "2"}
+	a1 := wallet.Wallet{AccountId: a.ID, Blockchain: "ETHEREUM", Crypto: "USDT", Address: "1"}
+	a2 := wallet.Wallet{AccountId: a.ID, Blockchain: "TRON", Crypto: "USDT", Address: "2"}
 
-	pool.Wallets = append(pool.Wallets, a1, a2)
-	a.Pool = pool
-
-	db.Create(&pool)
-
+	db.Create(&a1)
+	db.Create(&a2)
 	return nil
 }
 
@@ -48,11 +44,9 @@ func SetupTestDB() *gorm.DB {
 	err = db.AutoMigrate(
 		&charge.Charge{},
 		&charge.Wallet{},
-		&charge.WalletPool{},
 		&account.Account{},
 		&secret.Secret{},
 		&wallet.Wallet{},
-		&wallet.Pool{},
 		&price.Price{},
 		&counter.Counter{},
 	)
