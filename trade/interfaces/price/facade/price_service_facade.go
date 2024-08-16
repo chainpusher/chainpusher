@@ -7,5 +7,5 @@ import (
 type ServiceFacade interface {
 	GetPrice(crypto string) ([]*dto2.PriceDTO, error)
 
-	StorePrice(prices *[]dto2.PriceCommand) ([]*dto2.PriceCommand, error)
+	LoadPrices() ([]*dto2.PriceCommand, error)
 }

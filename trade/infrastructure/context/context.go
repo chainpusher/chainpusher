@@ -1,0 +1,4 @@
+package context
+
+func NewContext() {
+}
