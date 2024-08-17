@@ -186,6 +186,7 @@ func RunCommandWithOptions(options MonitorCommandOptions) {
 	monitorCmd := NewMonitorCobraCommand(options)
 
 	rootCmd.AddCommand(monitorCmd)
+	rootCmd.AddCommand(NewGatewayCommand())
 
 	if err := rootCmd.Execute(); err != nil {
 		fmt.Println(err)

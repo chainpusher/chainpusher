@@ -50,17 +50,13 @@ type Config struct {
 	Telegram struct {
 		Tokens []interface{} `json:"token"`
 	}
-	Http []HttpConfig `json:"http"`
-
-	InfuraKey string `yaml:"infura_key"`
-
-	BlockLoggingFile string `yaml:"logging_file"`
-
-	TransactionLoggingFile string `yaml:"transaction_file"`
-
-	IsTesting bool
-
-	Kafka KafkaConfig `yaml:"kafka"`
+	Http                   []HttpConfig `json:"http"`
+	InfuraKey              string       `yaml:"infura_key"`
+	BlockLoggingFile       string       `yaml:"logging_file"`
+	TransactionLoggingFile string       `yaml:"transaction_file"`
+	IsTesting              bool
+	Kafka                  KafkaConfig `yaml:"kafka"`
+	Gateway                Gateway     `yaml:"gateway"`
 }
 
 func (c *Config) GetKafka() *KafkaConfig {

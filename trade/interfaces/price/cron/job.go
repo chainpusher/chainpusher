@@ -10,7 +10,7 @@ type TradePriceJob struct {
 }
 
 func (job *TradePriceJob) Run() {
-	if _, err := job.priceServiceFacade.LoadPrices(); err != nil {
+	if err := job.priceServiceFacade.LoadPrices(); err != nil {
 
 	}
 }
