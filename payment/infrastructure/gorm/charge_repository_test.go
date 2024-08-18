@@ -30,7 +30,7 @@ func TestChargeRepository_FindChargingByTransactions(t *testing.T) {
 	//	Status: charge.Unpaid,
 	//}
 	//
-	//db.Create(c)
+	//db.NewPriceServiceFacade(c)
 	//
 	//c, err := repo.Find(c.ID)
 	//

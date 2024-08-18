@@ -1,4 +1,4 @@
-package internal
+package impl
 
 import (
 	"github.com/chainpusher/chainpusher/module/data"
@@ -6,7 +6,7 @@ import (
 	"github.com/chainpusher/chainpusher/trade/application"
 	"github.com/chainpusher/chainpusher/trade/domain/model/price"
 	dto2 "github.com/chainpusher/chainpusher/trade/interfaces/price/facade/dto"
-	"github.com/chainpusher/chainpusher/trade/interfaces/price/facade/internal/assembler"
+	"github.com/chainpusher/chainpusher/trade/interfaces/price/facade/impl/assembler"
 	"github.com/sirupsen/logrus"
 )
 

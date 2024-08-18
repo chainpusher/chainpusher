@@ -1,5 +1,7 @@
 package config
 
+import "github.com/chainpusher/chainpusher/module/datasource"
+
 type Gateway struct {
-	Datasource map[string]Datasource `yaml:"datasource"`
+	Datasource map[string]datasource.Datasource `yaml:"datasource"`
 }

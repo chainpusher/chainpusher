@@ -6,20 +6,21 @@ import (
 )
 
 type TradePriceJob struct {
-	priceServiceFacade facade.ServiceFacade
+	factory facade.PriceServiceFacadeFactory
 }
 
 func (job *TradePriceJob) Run() {
-	if err := job.priceServiceFacade.LoadPrices(); err != nil {
+	priceServiceFacade := job.factory.NewPriceServiceFacade()
+	if err := priceServiceFacade.LoadPrices(); err != nil {
 
 	}
 }
 
-func NewTradePriceJob(priceServiceFacade facade.ServiceFacade) *TradePriceJob {
-	return &TradePriceJob{priceServiceFacade: priceServiceFacade}
+func NewTradePriceJob(factory facade.PriceServiceFacadeFactory) *TradePriceJob {
+	return &TradePriceJob{factory: factory}
 }
 
-func NewCron(jobs []cron.Job) (*cron.Cron, error) {
+func NewCron(jobs ...cron.Job) (*cron.Cron, error) {
 	c := cron.New()
 	for _, job := range jobs {
 		if err := c.AddJob("@hourly", job); err != nil {
