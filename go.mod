@@ -19,6 +19,8 @@ require (
 	github.com/StackExchange/wmi v1.2.1 // indirect
 	github.com/bits-and-blooms/bitset v1.10.0 // indirect
 	github.com/btcsuite/btcd/btcec/v2 v2.2.0 // indirect
+	github.com/chainpusher/chainpusher/module v0.0.0-20240818140918-23b50b2be7e1 // indirect
+	github.com/chainpusher/chainpusher/trade v0.0.0-20240818140918-23b50b2be7e1 // indirect
 	github.com/consensys/bavard v0.1.13 // indirect
 	github.com/consensys/gnark-crypto v0.12.1 // indirect
 	github.com/crate-crypto/go-kzg-4844 v1.0.0 // indirect
@@ -33,12 +35,15 @@ require (
 	github.com/google/uuid v1.3.0 // indirect
 	github.com/holiman/uint256 v1.2.4 // indirect
 	github.com/inconshreveable/mousetrap v1.1.0 // indirect
+	github.com/jinzhu/inflection v1.0.0 // indirect
+	github.com/jinzhu/now v1.1.5 // indirect
 	github.com/mitchellh/go-homedir v1.1.0 // indirect
 	github.com/mmcloughlin/addchain v0.4.0 // indirect
 	github.com/pborman/uuid v1.2.1 // indirect
 	github.com/pkg/errors v0.9.1 // indirect
 	github.com/pmezard/go-difflib v1.0.0 // indirect
 	github.com/rjeczalik/notify v0.9.3 // indirect
+	github.com/robfig/cron v1.2.0 // indirect
 	github.com/shengdoushi/base58 v1.0.0 // indirect
 	github.com/shirou/gopsutil v3.21.4-0.20210419000835-c7a38de76ee5+incompatible // indirect
 	github.com/spf13/pflag v1.0.5 // indirect
@@ -58,5 +63,6 @@ require (
 	google.golang.org/genproto v0.0.0-20200825200019-8632dd797987 // indirect
 	google.golang.org/grpc v1.37.0 // indirect
 	google.golang.org/protobuf v1.33.0 // indirect
+	gorm.io/gorm v1.25.11 // indirect
 	rsc.io/tmplfunc v0.0.3 // indirect
 )
