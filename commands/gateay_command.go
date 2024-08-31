@@ -35,6 +35,8 @@ func GatewayCommand(cmd *cobra.Command, args []string) {
 	t = cron2.NewTask(c)
 	m := task.NewManager(t)
 	m.Start()
+
+	m.Wait()
 }
 
 func NewGatewayCommand() *cobra.Command {

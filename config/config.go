@@ -80,14 +80,15 @@ func ParseConfigFromYamlText(text string) (*Config, error) {
 }
 
 func ParseConfigFromYaml(file string) (*Config, error) {
+	var bytes []byte
+	var fd *os.File
+	var err error
 
-	fd, err := os.Open(file)
-	if err != nil {
+	if fd, err = os.Open(file); err != nil {
 		return nil, err
 	}
 
-	bytes, err := io.ReadAll(fd)
-	if err != nil {
+	if bytes, err = io.ReadAll(fd); err != nil {
 		return nil, err
 	}
 

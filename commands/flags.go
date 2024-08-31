@@ -2,10 +2,12 @@ package commands
 
 import (
 	"errors"
-	"github.com/chainpusher/chainpusher/config"
-	"github.com/spf13/cobra"
 	"os"
 	"path"
+
+	"github.com/chainpusher/chainpusher/config"
+	"github.com/sirupsen/logrus"
+	"github.com/spf13/cobra"
 )
 
 func SetupConfigPathFlag(cmd *cobra.Command) {
@@ -20,11 +22,11 @@ func GetConfig(cmd *cobra.Command) (*config.Config, error) {
 	var directories []string
 
 	if p, err = cmd.Flags().GetString("config"); err != nil {
-		p = "./config.yaml"
+		p = "./config.yml"
 	}
 
 	if wd, err = os.Getwd(); err == nil {
-		directories = append(directories, path.Join(wd, "config.yaml"))
+		directories = append(directories, wd)
 	}
 
 	if home, err = os.UserHomeDir(); err != nil {
@@ -36,8 +38,11 @@ func GetConfig(cmd *cobra.Command) (*config.Config, error) {
 	}
 
 	for _, d := range directories {
-		if _, err = os.Stat(d); err == nil {
-			return config.ParseConfigFromYaml(d)
+		f := path.Join(d, p)
+		if _, err = os.Stat(f); err == nil {
+			return config.ParseConfigFromYaml(f)
+		} else {
+			logrus.Infof("Load config file (%v) fail %v", f, err)
 		}
 	}
 
