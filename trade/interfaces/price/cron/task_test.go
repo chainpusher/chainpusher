@@ -20,3 +20,18 @@ func TestTask(t *testing.T) {
 
 	assert.True(t, executed)
 }
+
+func TestEntries(t *testing.T) {
+	c := cron.New()
+	executed := false
+
+	c.AddFunc("*/1 * * * * *", func() {
+		executed = true
+	})
+	time.Sleep(1 * time.Second)
+
+	entries := c.Entries()
+	entries[0].Job.Run()
+	assert.Len(t, entries, 1)
+	assert.True(t, executed)
+}
