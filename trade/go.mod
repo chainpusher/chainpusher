@@ -3,7 +3,7 @@ module github.com/chainpusher/chainpusher/trade
 go 1.22.3
 
 require (
-	github.com/chainpusher/chainpusher/module v0.0.0-20240817130845-582cb4eb0dec
+	github.com/chainpusher/chainpusher/module v0.0.0-20240902033712-b58da6420eaa
 	github.com/robfig/cron v1.2.0
 	github.com/sirupsen/logrus v1.9.3
 	github.com/stretchr/testify v1.9.0

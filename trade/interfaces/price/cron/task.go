@@ -1,13 +1,16 @@
 package cron
 
-import "github.com/robfig/cron"
+import (
+	"github.com/chainpusher/chainpusher/module/cron2"
+	"github.com/robfig/cron"
+)
 
 type Task struct {
 	cron *cron.Cron
 }
 
 func (t *Task) Start() error {
-	t.cron.Run()
+	cron2.ImediateRun(t.cron)
 	return nil
 }
 

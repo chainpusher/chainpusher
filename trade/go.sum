@@ -1,5 +1,5 @@
-github.com/chainpusher/chainpusher/module v0.0.0-20240817130845-582cb4eb0dec h1:F//Pk5iURtAZU2AA6LE9dS/Wzhun9jB6+IvC8gj/0rA=
-github.com/chainpusher/chainpusher/module v0.0.0-20240817130845-582cb4eb0dec/go.mod h1:7aRrRVwUY3n5qgaeGLMuWy7K3+3n1dWMw6TxAgNxQSw=
+github.com/chainpusher/chainpusher/module v0.0.0-20240902033712-b58da6420eaa h1:MnpE5kP5uVhiCcOCDZkEW840PD533dXGM5tmNDih/yY=
+github.com/chainpusher/chainpusher/module v0.0.0-20240902033712-b58da6420eaa/go.mod h1:UojvHmpT3ZuiDJ7V1tbVthAtEb+vnibTAyaKjGDsjIk=
 github.com/davecgh/go-spew v1.1.0/go.mod h1:J7Y8YcW2NihsgmVo/mv3lAwl/skON4iLHjSsI+c5H38=
 github.com/davecgh/go-spew v1.1.1 h1:vj9j/u1bqnvCEfJOwUhtlOARqs3+rkHYY13jYWTU97c=
 github.com/davecgh/go-spew v1.1.1/go.mod h1:J7Y8YcW2NihsgmVo/mv3lAwl/skON4iLHjSsI+c5H38=
